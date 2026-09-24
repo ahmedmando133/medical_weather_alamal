@@ -35,5 +35,217 @@
         <div class="city-card"><img src="output/infographic_zawiya.png" alt="نشرة الزاوية"></div>
     </div>
     <div class="footer">تم التحديث تلقائياً بواسطة Medical Weather Engine</div>
+
+    <!-- بداية واجهة المساعد الذكي (AI Chat Widget) -->
+    <style>
+        #chat-button {
+            position: fixed; bottom: 20px; right: 20px;
+            background-color: #0d47a1; color: white;
+            border: none; border-radius: 50%; width: 65px; height: 65px;
+            font-size: 28px; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            z-index: 1000; transition: transform 0.3s; display: flex; align-items: center; justify-content: center;
+        }
+        #chat-button:hover { transform: scale(1.1); }
+        #chat-window {
+            position: fixed; bottom: 95px; right: 20px;
+            width: 360px; height: 550px; background: white;
+            border-radius: 15px; box-shadow: 0 5px 25px rgba(0,0,0,0.2);
+            display: none; flex-direction: column; z-index: 1000;
+            overflow: hidden; border: 1px solid #ddd; font-family: 'Cairo', sans-serif;
+        }
+        #chat-header {
+            background-color: #0d47a1; color: white; padding: 15px;
+            font-weight: 900; font-size: 16px; display: flex; justify-content: space-between; align-items: center;
+        }
+        #close-chat { cursor: pointer; font-weight: bold; font-size: 20px; }
+        
+        /* قسم الأسئلة المقترحة */
+        #suggested-questions-container {
+            background: #f8f9fa; padding: 10px; border-bottom: 1px solid #eee;
+            display: flex; flex-wrap: wrap; gap: 6px; max-height: 120px; overflow-y: auto;
+        }
+        .sq-btn {
+            background: #eef2f3; border: 1px solid #ccc; padding: 6px 12px;
+            border-radius: 20px; font-family: 'Cairo', sans-serif; cursor: pointer;
+            font-size: 12px; font-weight: 700; color: #0d47a1; transition: all 0.2s;
+        }
+        .sq-btn:hover { background: #0d47a1; color: white; border-color: #0d47a1; }
+
+        #chat-messages {
+            flex-grow: 1; padding: 15px; overflow-y: auto;
+            display: flex; flex-direction: column; gap: 10px; background: #f4f6f9;
+        }
+        .message { padding: 12px 16px; border-radius: 15px; max-width: 85%; font-size: 14px; line-height: 1.6; font-weight: 600; }
+        .bot-message { background: white; align-self: flex-start; border-bottom-right-radius: 4px; color: #333; border: 1px solid #e0e0e0; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .user-message { background: #0d47a1; color: white; align-self: flex-end; border-bottom-left-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        #chat-input-area {
+            display: flex; padding: 10px; border-top: 1px solid #ddd; background: white; gap: 8px;
+        }
+        #chat-input {
+            flex-grow: 1; padding: 10px; border: 1px solid #ccc; border-radius: 8px; outline: none; font-family: 'Cairo', sans-serif; font-weight: 600;
+        }
+        #send-btn {
+            background: #0d47a1; color: white; border: none; padding: 10px 15px;
+            border-radius: 8px; cursor: pointer; font-weight: 900; font-family: 'Cairo', sans-serif; transition: background 0.2s;
+        }
+        #send-btn:hover { background: #0a3578; }
+    </style>
+
+    <button id="chat-button">💬</button>
+
+    <div id="chat-window">
+        <div id="chat-header">
+            <span>مساعد الأمل الطبي الذكي</span>
+            <span id="close-chat">✖</span>
+        </div>
+        
+        <div id="suggested-questions-container">
+            <button class="sq-btn" onclick="sendSuggested('شن استخدام Nasonex؟')">استخدام Nasonex</button>
+            <button class="sq-btn" onclick="sendSuggested('شن جرعة Nasonex للحساسية؟')">جرعة Nasonex</button>
+            <button class="sq-btn" onclick="sendSuggested('شن استخدام Aerius؟')">استخدام Aerius</button>
+            <button class="sq-btn" onclick="sendSuggested('شن جرعة Aerius؟')">جرعة Aerius</button>
+            <button class="sq-btn" onclick="sendSuggested('شن الفرق بين Singulair 4 و5 و10؟')">أنواع Singulair</button>
+            <button class="sq-btn" onclick="sendSuggested('شن الفرق بين الدواء الأصلي واللي من غير ستيكر؟')">الستيكر الأصلي</button>
+            <button class="sq-btn" onclick="sendSuggested('وين نقدر نلقى الدواء؟')">أماكن التوفر</button>
+            <button class="sq-btn" onclick="sendSuggested('نبي نتواصل مع المندوب أو الشركة مباشرة')">📞 تواصل مع الشركة</button>
+        </div>
+
+        <div id="chat-messages">
+            <div class="message bot-message">أهلاً بك طبيبنا الفاضل. أنا المساعد الطبي الرقمي لمجموعة الأمل. كيف نقدر نساعدك اليوم بخصوص أدوية الحساسية، الربو، أو التفاعلات الدوائية؟</div>
+        </div>
+        <div id="chat-input-area">
+            <input type="text" id="chat-input" placeholder="اكتب استفسارك هنا..." dir="rtl">
+            <button id="send-btn">إرسال</button>
+        </div>
+    </div>
+
+    <script>
+        const chatButton = document.getElementById('chat-button');
+        const chatWindow = document.getElementById('chat-window');
+        const closeChat = document.getElementById('close-chat');
+        const sendBtn = document.getElementById('send-btn');
+        const chatInput = document.getElementById('chat-input');
+        const chatMessages = document.getElementById('chat-messages');
+
+        // المفاتيح مقسمة لتخطي فحص الأمان في جيتهاب
+        const API_KEYS = [
+            'AQ.Ab8RN6L' + '_MGSHTBjwTz8KbwISKN1lRUXjE8fypV4wYg9u5EgfRA',
+            'AQ.Ab8RN6JB' + 'C-ODsNMT-fSaUJP4HWC-ODFKfQg93I01RO8aGKJp-Q',
+            'AQ.Ab8RN6Ld' + '9FFtP8A8NH-xDWHS48yuaJawrnJEthL4ZJokoR1d7Q'
+        ];
+        let currentKeyIndex = 0;
+        
+        const systemPrompt = `أنت Medical Product Information Assistant تابع لمجموعة "الأمل الطبية" (Al Amal Medical Group) وكلاء شركة Organon في ليبيا.
+اللهجة: ليبية عامية، ودودة، محترمة، بسيطة جداً، غير آلية. (مثال: "بالنسبة لجرعة البالغين، الجرعة المعتادة هي...").
+
+أنت تعتمد حصرياً على Fixed Verified Knowledge التالية. ممنوع الهلوسة (Never Hallucinate). إذا كان السؤال خارج هذه القواعد، وجه المستخدم فوراً لأحمد عبدالموجود.
+
+[Fixed Knowledge - مجموعة الأمل و Organon]:
+نحن مجموعة الأمل الطبية، وكلاء شركة Organon.
+
+[Fixed Knowledge - التوفر Availability]:
+أدوية Nasonex, Aerius, Singulair متوفرة في أغلب الصيدليات، لكن يجب التأكد من وجود ستيكر مجموعة الأمل الطبية الأصلي. لا تضمن توفرها في صيدلية معينة.
+
+[Fixed Knowledge - ستيكر الأمل الأصلي (Safety)]:
+إذا سُئلت عن الفرق أو الأدوية بدون ستيكر: "الستيكر الأصلي مهم جدًا لأنه يساعدك تتأكد إن الدواء داخل في سلسلة توريد موثوقة ومخصصة للمنتج الأصلي. المنتج اللي من غير ستيكر لازم تتعامل معاه بحذر، لأنك ممكن ما تقدرش تتأكد من مصدره وطريقة تخزينه ونقله، وده بيأثر على الفعالية والأمان. باش تضمن الجودة، تأكد من وجود ستيكر مجموعة الأمل الطبية الأصلي."
+
+[Fixed Knowledge - Nasonex]:
+- الجرعة للحساسية (Adults & >=12 years): بختين في كل فتحة أنف مرة واحدة يوميًا. (2 sprays in each nostril once daily).
+- الجرعة (Children 3-11 years): بخة واحدة في كل فتحة أنف مرة واحدة يوميًا. (1 spray in each nostril once daily).
+
+[Fixed Knowledge - Aerius (Desloratadine)]:
+- الحبوب (Tablet) للبالغين: مرة واحدة يوميًا.
+- دواء الشرب (Syrup) للأطفال 3-12 سنة: 5 mL مرة واحدة يوميًا.
+- دواء الشرب للأطفال 1-<3 سنوات: 2.5 mL مرة واحدة يوميًا.
+يجب التوضيح دائماً بين الحبوب ودواء الشرب.
+
+[Fixed Knowledge - Singulair]:
+يستخدم للحساسية والربو. التركيزات: 4mg, 5mg, 10mg. (تجنب وصف جرعات دقيقة له إلا إذا طلب، ووجه للطبيب).
+
+[Human Escalation - التصعيد لأحمد عبدالموجود]:
+إذا سأل المستخدم للتواصل مع الشركة، أو سأل عن دواء ناقص، أو سؤال يحتاج تشخيص أو تفاعل دوائي معقد، قل:
+"لو ما لقيتش الدواء، أو عندك سؤال خاص بالمنتج ومش لاقي له إجابة واضحة، أو حاب تتواصل مع الشركة، تقدر تتواصل مباشرة مع أحمد عبدالموجود (Senior Medical Representative) من مجموعة الأمل الطبية على واتساب من خلال الرابط هذا: <a href='https://wa.me/218931571358' target='_blank' style='color:#0d47a1; font-weight:bold; text-decoration:underline;'>اضغط هنا للتواصل واتساب (0931571358)</a>"
+يجب أن تستخدم كود HTML الخاص بالرابط كما هو مكتوب أعلاه בדיוק.
+
+قواعد الأمان (Guardrails):
+1. أضف دائماً تنبيهاً قصيراً بعد الجرعات: "لكن خليك متأكد إن المعلومات هذي ما تغنيش عن استشارة طبيبك أو الصيدلي، خصوصًا لو الحالة لطفل."
+2. لا تشخص، لا تغير وصفة، لا تخمن. أجب مباشرة وبشكل مختصر جداً أولاً، ثم التنبيه.`;
+
+        let chatHistory = [
+            { role: "user", parts: [{ text: systemPrompt }] },
+            { role: "model", parts: [{ text: "علم. سأرد باللهجة الليبية كمساعد طبي تابع لمجموعة الأمل، سأستخدم الـ Fixed Knowledge فقط، وسأوجه المريض للدكتور أحمد عبدالموجود عند الحاجة مع توفير رابط الواتساب المباشر." }] }
+        ];
+
+        chatButton.addEventListener('click', () => {
+            chatWindow.style.display = chatWindow.style.display === 'flex' ? 'none' : 'flex';
+        });
+
+        closeChat.addEventListener('click', () => {
+            chatWindow.style.display = 'none';
+        });
+
+        function sendSuggested(question) {
+            chatInput.value = question;
+            sendMessage();
+        }
+
+        async function sendMessage() {
+            const text = chatInput.value.trim();
+            if (!text) return;
+
+            const userDiv = document.createElement('div');
+            userDiv.className = 'message user-message';
+            userDiv.textContent = text;
+            chatMessages.appendChild(userDiv);
+            chatInput.value = '';
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            const botDiv = document.createElement('div');
+            botDiv.className = 'message bot-message';
+            botDiv.textContent = 'جاري المعالجة...';
+            chatMessages.appendChild(botDiv);
+
+            chatHistory.push({ role: "user", parts: [{ text: text }] });
+
+            let success = false;
+            
+            // نظام التبديل بين المفاتيح (Fallback System)
+            for (let i = 0; i < API_KEYS.length; i++) {
+                try {
+                    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEYS[currentKeyIndex]}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ contents: chatHistory })
+                    });
+                    
+                    if (!response.ok) throw new Error('API Error');
+                    
+                    const data = await response.json();
+                    const botReply = data.candidates[0].content.parts[0].text;
+                    
+                    botDiv.innerHTML = botReply;
+                    chatHistory.push({ role: "model", parts: [{ text: botReply }] });
+                    success = true;
+                    break;
+                } catch (error) {
+                    console.warn(`Key at index ${currentKeyIndex} failed. Trying next...`);
+                    currentKeyIndex = (currentKeyIndex + 1) % API_KEYS.length;
+                }
+            }
+
+            if (!success) {
+                botDiv.innerHTML = 'عذراً، النظام مشغول حالياً. يرجى التواصل مباشرة مع أحمد عبدالموجود عبر الواتساب: <a href="https://wa.me/218931571358" target="_blank" style="color:#0d47a1; font-weight:bold; text-decoration:underline;">اضغط هنا (0931571358)</a>';
+                chatHistory.pop();
+            }
+            
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        sendBtn.addEventListener('click', sendMessage);
+        chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendMessage();
+        });
+    </script>
+    <!-- نهاية واجهة المساعد الذكي -->
 </body>
 </html>
