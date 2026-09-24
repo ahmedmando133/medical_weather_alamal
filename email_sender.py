@@ -10,8 +10,7 @@ def send_infographics_email():
     # 2. قائمة المستلمين
     RECEIVER_EMAILS = [
         "ahmed.abdelmawgood@amalgrp.com",
-        "rawdamofed@gmail.com",
-        "exaple3@gmail.com"
+        
     ]
     
     msg = EmailMessage()
