@@ -7,7 +7,7 @@ def send_infographics_email():
     SENDER_EMAIL = "ahmed.mohamed.abdelmawgoud@gmail.com"
     APP_PASSWORD = "ueojstnpoisbvzww"
     
-    # 2. قائمة المستلمين (بالإيميلات اللي إنت ضفتها)
+    # 2. قائمة المستلمين
     RECEIVER_EMAILS = [
         "ahmed.abdelmawgood@amalgrp.com",
         "exampel2@gmail.com",
@@ -21,20 +21,49 @@ def send_infographics_email():
     # دمج كل الإيميلات عشان تتبعتلهم كلهم في نفس اللحظة
     msg['To'] = ", ".join(RECEIVER_EMAILS)
     
-    # 3. محتوى الرسالة (صياغة طبية احترافية)
-    email_body = """السادة الأطباء والزملاء الكرام،
+    # 3. محتوى الرسالة (النسخة النصية العادية)
+    text_body = """السادة الأطباء والزملاء الكرام،
 
-مرفق طيه النشرة الجوية الطبية المحدثة لمدن ليبيا لهذا الأسبوع.
+مرفق طيه النشرة الجوية الطبية المحدثة لمدن ليبيا.
 
-تم احتساب (مؤشر الحساسية) و (خطر الربو) بدقة استناداً إلى المعايير الطبية العالمية لمنظمة الصحة العالمية (WHO Guidelines) لجودة الهواء. حيث يقيس (مؤشر الحساسية) مستويات الغبار والجسيمات الدقيقة، بينما يعكس (خطر الربو) تأثير الرطوبة والغازات المهيجة على الجهاز التنفسي.
+تم احتساب (مؤشر الحساسية) و (خطر الربو) بدقة استناداً إلى المعايير الطبية العالمية لمنظمة الصحة العالمية (WHO Guidelines) لجودة الهواء.
 
-⚠️ نوصي بالالتزام التام بالخطط العلاجية وجرعات بخاخات الأنف ومضادات الحساسية الموصوفة من قِبل طبيبك المختص.
+🌐 جديد: يمكنكم الآن متابعة النشرة التفاعلية المحدثة يومياً لجميع المدن عبر الرابط التالي:
+https://ahmedmando133.github.io/medical_weather_alamal/
+
+⚠️ نوصي بتوجيه المرضى للالتزام التام بالخطط العلاجية وجرعات بخاخات الأنف ومضادات الحساسية الموصوفة من قِبل سيادتكم.
 
 مع خالص التحيات،
-مجموعة الأمل الطبية
-Organon | Al Amal Medicine Group"""
+أحمد عبد الموجود
+Medical Representative - Organon
+Al Amal Medicine Group
+"""
+
+    # محتوى الرسالة (نسخة الـ HTML الاحترافية للزر التفاعلي)
+    html_body = """
+    <div dir="rtl" style="font-family: Arial, sans-serif; font-size: 16px; color: #333; line-height: 1.6;">
+        <p>السادة الأطباء والزملاء الكرام،</p>
+        <p>مرفق طيه النشرة الجوية الطبية المحدثة لمدن ليبيا.</p>
+        <p>تم احتساب <b>(مؤشر الحساسية)</b> و <b>(خطر الربو)</b> بدقة استناداً إلى المعايير الطبية العالمية لمنظمة الصحة العالمية (WHO Guidelines) لجودة الهواء.</p>
+
+        <div style="background-color: #f4f6f9; border-right: 4px solid #0d47a1; padding: 15px; margin: 20px 0;">
+            <h3 style="margin-top: 0; margin-bottom: 10px; color: #0d47a1;">🌐 لوحة الطقس الطبي التفاعلية</h3>
+            <p style="margin-top: 0; margin-bottom: 15px;">يمكنكم الآن متابعة النشرة المحدثة يومياً لجميع المدن بضغطة واحدة من أي جهاز عبر الرابط التالي:</p>
+            <a href="https://ahmedmando133.github.io/medical_weather_alamal/" style="background-color: #0d47a1; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">عرض النشرة الطبية المباشرة</a>
+        </div>
+
+        <p>⚠️ نوصي بتوجيه المرضى للالتزام التام بالخطط العلاجية وجرعات بخاخات الأنف ومضادات الحساسية الموصوفة من قِبل سيادتكم.</p>
+        <br>
+        <p>مع خالص التحيات،<br>
+        <b>أحمد عبد الموجود</b><br>
+        Medical Representative - Organon<br>
+        Al Amal Medicine Group</p>
+    </div>
+    """
     
-    msg.set_content(email_body)
+    # دمج النسختين في الإيميل
+    msg.set_content(text_body)
+    msg.add_alternative(html_body, subtype='html')
 
     # 4. سحب الصور من فولدر output
     output_dir = 'output'
