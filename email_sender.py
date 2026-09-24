@@ -10,7 +10,7 @@ def send_infographics_email():
     # 2. قائمة المستلمين
     RECEIVER_EMAILS = [
         "ahmed.abdelmawgood@amalgrp.com",
-        "exampel2@gmail.com",
+        "nadeenabdelrahman96@gmail.com",
         "exaple3@gmail.com"
     ]
     
@@ -35,7 +35,7 @@ https://ahmedmando133.github.io/medical_weather_alamal/
 
 مع خالص التحيات،
 أحمد عبد الموجود
-Medical Representative - Organon
+Senior Medical Representative - Organon
 Al Amal Medicine Group
 """
 
@@ -56,7 +56,7 @@ Al Amal Medicine Group
         <br>
         <p>مع خالص التحيات،<br>
         <b>أحمد عبد الموجود</b><br>
-        Medical Representative - Organon<br>
+        Senior Medical Representative - Organon<br>
         Al Amal Medicine Group</p>
     </div>
     """
