@@ -15,7 +15,6 @@
         img:hover { transform: scale(1.02); }
         .footer { margin-top: 40px; font-size: 0.9rem; color: #777; }
 
-        /* ========================= AI CHAT BUTTON ========================== */
         #chat-button {
             position: fixed; bottom: 20px; right: 20px;
             background-color: #0d47a1; color: white;
@@ -37,7 +36,6 @@
         }
         #close-chat { cursor: pointer; font-weight: bold; font-size: 20px; }
 
-        /* ========================= SUGGESTED QUESTIONS ========================== */
         #suggested-questions-container {
             background: #f8f9fa; padding: 10px; border-bottom: 1px solid #eee;
             display: flex; flex-wrap: wrap; gap: 6px; max-height: 120px; overflow-y: auto;
@@ -49,7 +47,6 @@
         }
         .sq-btn:hover { background: #0d47a1; color: white; border-color: #0d47a1; }
 
-        /* ========================= MESSAGES ========================== */
         #chat-messages {
             flex-grow: 1; padding: 15px; overflow-y: auto;
             display: flex; flex-direction: column; gap: 10px; background: #f4f6f9;
@@ -58,7 +55,6 @@
         .bot-message { background: white; align-self: flex-start; border-bottom-right-radius: 4px; color: #333; border: 1px solid #e0e0e0; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
         .user-message { background: #0d47a1; color: white; align-self: flex-end; border-bottom-left-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
 
-        /* ========================= INPUT ========================== */
         #chat-input-area {
             display: flex; padding: 10px; border-top: 1px solid #ddd; background: white; gap: 8px;
         }
@@ -72,38 +68,18 @@
         #send-btn:hover { background: #0a3578; }
         #send-btn:disabled { background: #999; cursor: not-allowed; }
     </style>
-
-    <!-- Microsoft Clarity -->
-    <script type="text/javascript">
-        (function(c,l,a,r,i,t,y){
-            c[a]=c[a]||function(){ (c[a].q=c[a].q||[]).push(arguments) };
-            t=l.createElement(r); t.async=1; t.src="https://www.clarity.ms/tag/"+i;
-            y=l.getElementsByTagName(r)[0]; y.parentNode.insertBefore(t,y);
-        })(window, document, "clarity", "script", "ynixc5tdro");
-    </script>
 </head>
 <body>
     <h1>🌤 النشرة الطبية لمرضى الحساسية والربو</h1>
     <p>برعاية مجموعة الأمل الطبية - Organon</p>
     <div class="grid">
-        <div class="city-card">
-            <img src="output/infographic_tripoli.png" alt="نشرة طرابلس">
-        </div>
-        <div class="city-card">
-            <img src="output/infographic_benghazi.png" alt="نشرة بنغازي">
-        </div>
-        <div class="city-card">
-            <img src="output/infographic_misrata.png" alt="نشرة مصراتة">
-        </div>
-        <div class="city-card">
-            <img src="output/infographic_zawiya.png" alt="نشرة الزاوية">
-        </div>
+        <div class="city-card"><img src="output/infographic_tripoli.png" alt="نشرة طرابلس"></div>
+        <div class="city-card"><img src="output/infographic_benghazi.png" alt="نشرة بنغازي"></div>
+        <div class="city-card"><img src="output/infographic_misrata.png" alt="نشرة مصراتة"></div>
+        <div class="city-card"><img src="output/infographic_zawiya.png" alt="نشرة الزاوية"></div>
     </div>
-    <div class="footer">
-        تم التحديث تلقائياً بواسطة Medical Weather Engine
-    </div>
+    <div class="footer">تم التحديث تلقائياً بواسطة Medical Weather Engine</div>
 
-    <!-- ========================= AI CHAT WIDGET ========================== -->
     <button id="chat-button">💬</button>
 
     <div id="chat-window">
@@ -112,7 +88,6 @@
             <span id="close-chat"> ✖️ </span>
         </div>
 
-        <!-- Suggested Questions -->
         <div id="suggested-questions-container">
             <button class="sq-btn" onclick="sendSuggested('شن استخدام Nasonex؟')"> استخدام Nasonex </button>
             <button class="sq-btn" onclick="sendSuggested('شن جرعة Nasonex للحساسية؟')"> جرعة Nasonex </button>
@@ -124,14 +99,12 @@
             <button class="sq-btn" onclick="sendSuggested('نبي نتواصل مع المندوب أو الشركة مباشرة')"> 📞 تواصل مع الشركة </button>
         </div>
 
-        <!-- Messages -->
         <div id="chat-messages">
             <div class="message bot-message">
                 أهلاً بك طبيبنا الفاضل. أنا المساعد الطبي الرقمي لمجموعة الأمل. كيف نقدر نساعدك اليوم بخصوص أدوية الحساسية، الربو، أو التفاعلات الدوائية؟
             </div>
         </div>
 
-        <!-- Input -->
         <div id="chat-input-area">
             <input type="text" id="chat-input" placeholder="اكتب استفسارك هنا..." dir="rtl">
             <button id="send-btn"> إرسال </button>
@@ -146,9 +119,6 @@
         const chatInput = document.getElementById('chat-input');
         const chatMessages = document.getElementById('chat-messages');
 
-        /* =====================================================
-            GROQ API CONFIGURATION
-        ===================================================== */
         const API_KEY = "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";
         const MODEL_NAME = "openai/gpt-oss-20b";
         const API_URL = "https://api.groq.com/openai/v1/chat/completions";
@@ -156,48 +126,20 @@
         const systemPrompt = `أنت Medical Product Information Assistant تابع لمجموعة "الأمل الطبية" (Al Amal Medical Group) وكلاء شركة Organon في ليبيا.
 اللهجة: ليبية عامية، ودودة، محترمة، بسيطة جداً، غير آلية.
 أنت تعتمد حصرياً على Fixed Verified Knowledge التالية. ممنوع الهلوسة.
+[Fixed Knowledge - مجموعة الأمل و Organon] نحن مجموعة الأمل الطبية، وكلاء شركة Organon.
+[Fixed Knowledge - التوفر Availability] أدوية Nasonex, Aerius, Singulair متوفرة في أغلب الصيدليات، لكن يجب التأكد من وجود ستيكر مجموعة الأمل الطبية الأصلي.
+[Fixed Knowledge - ستيكر الأمل الأصلي Safety] إذا سُئلت عن الفرق أو الأدوية بدون ستيكر: "الستيكر الأصلي مهم جدًا لأنه يساعدك تتأكد إن الدواء داخل في سلسلة توريد موثوقة ومخصصة للمنتج الأصلي."
+[Nasonex] الجرعة للحساسية Adults & >=12 years: بختين في كل فتحة أنف مرة واحدة يوميًا. Children 3-11 years: بخة واحدة في كل فتحة أنف مرة واحدة يوميًا.
+[Aerius] الحبوب للبالغين مرة يومياً، الشرب للأطفال حسب العمر.
+[Singulair] يستخدم للحساسية والربو (4, 5, 10 mg).
+[Human Escalation] لو ما لقيتش الدواء، تواصل عبر واتساب: <a href='https://wa.me/218931571358' target='_blank' style='color:#0d47a1; font-weight:bold; text-decoration:underline;'>واتساب مجموعة الأمل (0931571358)</a>`;
 
-[Fixed Knowledge - مجموعة الأمل و Organon]
-نحن مجموعة الأمل الطبية، وكلاء شركة Organon.
-
-[Fixed Knowledge - التوفر Availability]
-أدوية Nasonex, Aerius, Singulair متوفرة في أغلب الصيدليات، لكن يجب التأكد من وجود ستيكر مجموعة الأمل الطبية الأصلي. لا تضمن توفرها في صيدلية معينة.
-
-[Fixed Knowledge - ستيكر الأمل الأصلي Safety]
-إذا سُئلت عن الفرق أو الأدوية بدون ستيكر: "الستيكر الأصلي مهم جدًا لأنه يساعدك تتأكد إن الدواء داخل في سلسلة توريد موثوقة ومخصصة للمنتج الأصلي. المنتج اللي من غير ستيكر لازم تتعامل معاه بحذر، لأنك ممكن ما تقدرش تتأكد من مصدره وطريقة تخزينه ونقله، وده بيأثر على الفعالية والأمان. باش تضمن الجودة، تأكد من وجود ستيكر مجموعة الأمل الطبية الأصلي."
-
-[Nasonex]
-الجرعة للحساسية Adults & >=12 years: بختين في كل فتحة أنف مرة واحدة يوميًا.
-Children 3-11 years: بخة واحدة في كل فتحة أنف مرة واحدة يوميًا.
-
-[Aerius - Desloratadine]
-الحبوب Tablet للبالغين: مرة واحدة يوميًا.
-دواء الشرب Syrup للأطفال 3-12 سنة: 5 mL مرة واحدة يوميًا.
-دواء الشرب للأطفال 1-<3 سنوات: 2.5 mL مرة واحدة يوميًا.
-
-[Singulair]
-يستخدم للحساسية والربو. التركيزات: 4mg 5mg 10mg
-
-[Human Escalation - التصعيد]
-إذا سأل المستخدم للتواصل مع الشركة أو دواء ناقص، قل:
-"لو ما لقيتش الدواء، أو عندك سؤال خاص بالمنتج، تقدر تتواصل مباشرة مع فريق مجموعة الأمل الطبية على واتساب من خلال الرابط هذا: <a href='https://wa.me/218931571358' target='_blank' style='color:#0d47a1; font-weight:bold; text-decoration:underline;'>اضغط هنا للتواصل واتساب (0931571358)</a>"
-
-[Safety Guardrails]
-1. أضف دائماً تنبيهاً قصيراً بعد الجرعات: "لكن خليك متأكد إن المعلومات هذي ما تغنيش عن استشارة طبيبك أو الصيدلي."
-2. لا تشخص ولا تخمن.
-3. أجب مباشرة وبشكل مختصر جداً أولاً، ثم التنبيه.`;
-
-        let messages = [
-            { role: "system", content: systemPrompt }
-        ];
+        let messages = [{ role: "system", content: systemPrompt }];
 
         chatButton.addEventListener('click', () => {
             chatWindow.style.display = chatWindow.style.display === 'flex' ? 'none' : 'flex';
         });
-
-        closeChat.addEventListener('click', () => {
-            chatWindow.style.display = 'none';
-        });
+        closeChat.addEventListener('click', () => { chatWindow.style.display = 'none'; });
 
         function sendSuggested(question) {
             chatInput.value = question;
@@ -218,7 +160,6 @@ Children 3-11 years: بخة واحدة في كل فتحة أنف مرة واحد
             userDiv.className = 'message user-message';
             userDiv.textContent = escapeHtml(text);
             chatMessages.appendChild(userDiv);
-
             chatInput.value = '';
             chatMessages.scrollTop = chatMessages.scrollHeight;
 
@@ -244,22 +185,18 @@ Children 3-11 years: بخة واحدة في كل فتحة أنف مرة واحد
                 });
 
                 const data = await response.json();
-
                 if (!response.ok) {
                     throw new Error(`HTTP ${response.status}: ${data?.error?.message || response.statusText}`);
                 }
 
                 const botReply = data?.choices?.[0]?.message?.content;
-                if (!botReply) {
-                    throw new Error("Groq returned an empty response.");
-                }
+                if (!botReply) { throw new Error("Empty response"); }
 
                 botDiv.innerHTML = botReply;
                 messages.push({ role: "assistant", content: botReply });
-
             } catch (error) {
                 console.error("Groq request failed:", error);
-                botDiv.innerHTML = `عذراً، حدث خطأ في الاتصال. يرجى التواصل مباشرة عبر الواتساب: <a href="https://wa.me/218931571358" target="_blank" style="color:#0d47a1;font-weight:bold;">0931571358</a>`;
+                botDiv.innerHTML = `عذراً، حدث خطأ في الاتصال. تواصل معنا مباشرة عبر الواتساب: <a href="https://wa.me/218931571358" target="_blank" style="color:#0d47a1;font-weight:bold;">0931571358</a>`;
                 messages.pop();
             }
 
@@ -269,9 +206,7 @@ Children 3-11 years: بخة واحدة في كل فتحة أنف مرة واحد
 
         sendBtn.addEventListener('click', sendMessage);
         chatInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                sendMessage();
-            }
+            if (e.key === 'Enter') { sendMessage(); }
         });
     </script>
 </body>
