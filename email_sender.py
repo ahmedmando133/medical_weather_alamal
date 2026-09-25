@@ -10,7 +10,6 @@ def send_infographics_email():
     # 2. قائمة المستلمين
     RECEIVER_EMAILS = [
         "ahmed.abdelmawgood@amalgrp.com",
-        
     ]
     
     msg = EmailMessage()
@@ -30,6 +29,9 @@ def send_infographics_email():
 🌐 جديد: يمكنكم الآن متابعة النشرة التفاعلية المحدثة يومياً لجميع المدن عبر الرابط التالي:
 https://ahmedmando133.github.io/medical_weather_alamal/
 
+🤖 مساعد الأمل الذكي داخل الموقع:
+يتضمن الموقع مساعداً ذكياً (AI-powered assistant) لمساعدتكم في الوصول السريع لمعلومات الأدوية، تفاصيل النشرة الطبية، جرعاتها الموثقة، والإجابة عن الاستفسارات المرتبطة بخدمات مجموعة الأمل الطبية. يمكنكم التحدث معه مباشرة داخل الموقع لأي استفسار توجيهي (ملاحظة: المساعد أداة معلوماتية وتوجيهية ولا يُغني عن وصفة الطبيب أو استشارة الصيدلي).
+
 ⚠️ نوصي بتوجيه المرضى للالتزام التام بالخطط العلاجية وجرعات بخاخات الأنف ومضادات الحساسية الموصوفة من قِبل سيادتكم.
 
 مع خالص التحيات،
@@ -38,7 +40,7 @@ Senior Medical Representative - Organon
 Al Amal Medicine Group
 """
 
-    # محتوى الرسالة (نسخة الـ HTML الاحترافية للزر التفاعلي)
+    # محتوى الرسالة (نسخة الـ HTML الاحترافية للزر التفاعلي والـ AI Assistant)
     html_body = """
     <div dir="rtl" style="font-family: Arial, sans-serif; font-size: 16px; color: #333; line-height: 1.6;">
         <p>السادة الأطباء والزملاء الكرام،</p>
@@ -49,6 +51,14 @@ Al Amal Medicine Group
             <h3 style="margin-top: 0; margin-bottom: 10px; color: #0d47a1;">🌐 لوحة الطقس الطبي التفاعلية</h3>
             <p style="margin-top: 0; margin-bottom: 15px;">يمكنكم الآن متابعة النشرة المحدثة يومياً لجميع المدن بضغطة واحدة من أي جهاز عبر الرابط التالي:</p>
             <a href="https://ahmedmando133.github.io/medical_weather_alamal/" style="background-color: #0d47a1; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">عرض النشرة الطبية المباشرة</a>
+        </div>
+
+        <div style="background-color: #eef2f3; border-right: 4px solid #1976d2; padding: 15px; margin: 20px 0;">
+            <h4 style="margin-top: 0; margin-bottom: 8px; color: #0d47a1;">🤖 مساعد الأمل الذكي (AI-powered Assistant)</h4>
+            <p style="margin-top: 0; margin-bottom: 0; font-size: 15px;">
+                يحتوي الموقع على مساعد ذكي متكامل لمساعدتكم في استعراض معلومات الأدوية، تفاصيل النشرة الطبية، جرعاتها الموثقة، والإجابة عن أي استفسار متعلق بخدمات ومحتوى مجموعة الأمل الطبية. يمكنكم التحدث معه مباشرة داخل الموقع للحصول على التوجيه والمعلومات بكل سهولة. 
+                <br><small style="color: #666;">(ملاحظة: المساعد أداة توجيهية ومعلوماتية ولا يُغني عن التقييم السريري ووصفة الطبيب أو الصيدلي).</small>
+            </p>
         </div>
 
         <p>⚠️ نوصي بتوجيه المرضى للالتزام التام بالخطط العلاجية وجرعات بخاخات الأنف ومضادات الحساسية الموصوفة من قِبل سيادتكم.</p>
