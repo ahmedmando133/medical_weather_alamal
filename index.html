@@ -140,7 +140,7 @@
 
     <script>
         /* =====================================================
-           DOM ELEMENTS
+            DOM ELEMENTS
         ===================================================== */
         const chatButton = document.getElementById('chat-button');
         const chatWindow = document.getElementById('chat-window');
@@ -150,31 +150,29 @@
         const chatMessages = document.getElementById('chat-messages');
 
         /* =====================================================
-           GEMINI API CONFIGURATION
+            GROQ API CONFIGURATION
         ===================================================== */
         const API_KEYS = [
-            "AQ.Ab8RN6L_MGSHTBjwTz8KbwISKNllRUXjE8fypV4wYg9u5EgfrA",
-            "AQ.Ab8RN6JBc-ODsNMT-fSaUJP4HWc-ODFKfQg93IO1RO8aGKJp-Q",
-            "AQ.Ab8RN6Ld9FFtP8A8NH-xDWHs48yuaJawrNJethL4ZJokoR1d7Q"
+            "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"
         ];
 
         /* =====================================================
-           MODEL
+            MODEL
         ===================================================== */
-        const MODEL_NAME = "gemini-3.8-flash";
+        const MODEL_NAME = "llama-3.3-70b-versatile";
 
         /* =====================================================
-           GOOGLE GEMINI OPENAI-COMPATIBLE ENDPOINT
+            GROQ OPENAI-COMPATIBLE ENDPOINT
         ===================================================== */
-        const API_URL = "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions";
+        const API_URL = "https://api.groq.com/openai/v1/chat/completions";
 
         /* =====================================================
-           KEY ROTATION
+            KEY ROTATION
         ===================================================== */
         let currentKeyIndex = 0;
 
         /* =====================================================
-           SYSTEM PROMPT
+            SYSTEM PROMPT
         ===================================================== */
         const systemPrompt = `أنت Medical Product Information Assistant تابع لمجموعة "الأمل الطبية" (Al Amal Medical Group) وكلاء شركة Organon في ليبيا.
 
@@ -209,7 +207,7 @@ Children 3-11 years: بخة واحدة في كل فتحة أنف مرة واحد
 [Human Escalation - التصعيد لفريق مجموعة الأمل الطبية]
 إذا سأل المستخدم للتواصل مع الشركة، أو سأل عن دواء ناقص، أو سؤال يحتاج تشخيص أو تفاعل دوائي معقد، قل:
 "لو ما لقيتش الدواء، أو عندك سؤال خاص بالمنتج ومش لاقي له إجابة واضحة، أو حاب تتواصل مع الشركة، تقدر تتواصل مباشرة مع فريق مجموعة الأمل الطبية على واتساب من خلال الرابط هذا: <a href='https://wa.me/218931571358' target='_blank' style='color:#0d47a1; font-weight:bold; text-decoration:underline;'>اضغط هنا للتواصل واتساب (0931571358)</a>"
-يجب أن تستخدم كود HTML الخاص بالرابط كما هو مكتوب أعلاه.
+يجب أن تستخدم كود HTML الخاص الرابط كما هو مكتوب أعلاه.
 
 [Safety Guardrails]
 1. أضف دائماً تنبيهاً قصيراً بعد الجرعات: "لكن خليك متأكد إن المعلومات هذي ما تغنيش عن استشارة طبيبك أو الصيدلي، خصوصًا لو الحالة لطفل."
@@ -223,14 +221,14 @@ Children 3-11 years: بخة واحدة في كل فتحة أنف مرة واحد
 9. حافظ على اللهجة الليبية الودية والمهنية.`;
 
         /* =====================================================
-           CONVERSATION
+            CONVERSATION
         ===================================================== */
         let messages = [
             { role: "system", content: systemPrompt }
         ];
 
         /* =====================================================
-           OPEN / CLOSE CHAT
+            OPEN / CLOSE CHAT
         ===================================================== */
         chatButton.addEventListener('click', () => {
             chatWindow.style.display = chatWindow.style.display === 'flex' ? 'none' : 'flex';
@@ -241,7 +239,7 @@ Children 3-11 years: بخة واحدة في كل فتحة أنف مرة واحد
         });
 
         /* =====================================================
-           SUGGESTED QUESTION
+            SUGGESTED QUESTION
         ===================================================== */
         function sendSuggested(question) {
             chatInput.value = question;
@@ -249,8 +247,8 @@ Children 3-11 years: بخة واحدة في كل فتحة أنف مرة واحد
         }
 
         /* =====================================================
-           SAFE HTML ESCAPE
-           Prevent user input from being interpreted as HTML.
+            SAFE HTML ESCAPE
+            Prevent user input from being interpreted as HTML.
         ===================================================== */
         function escapeHtml(text) {
             const div = document.createElement('div');
@@ -259,37 +257,37 @@ Children 3-11 years: بخة واحدة في كل فتحة أنف مرة واحد
         }
 
         /* =====================================================
-           GET CURRENT API KEY
+            GET CURRENT API KEY
         ===================================================== */
         function getCurrentApiKey() {
             return API_KEYS[currentKeyIndex];
         }
 
         /* =====================================================
-           MOVE TO NEXT KEY
+            MOVE TO NEXT KEY
         ===================================================== */
         function moveToNextKey() {
             currentKeyIndex = (currentKeyIndex + 1) % API_KEYS.length;
         }
 
         /* =====================================================
-           SEND MESSAGE
+            SEND MESSAGE
         ===================================================== */
         async function sendMessage() {
             const text = chatInput.value.trim();
             if (!text) { return; }
 
             /* ---------------------------------------------
-               Check API keys
+                Check API keys
             --------------------------------------------- */
             const validKeys = API_KEYS.filter( key => key && !key.startsWith("YOUR_") && key.trim().length > 10 );
             if (validKeys.length === 0) {
-                alert( "لم يتم إضافة Gemini API Key. ضع مفاتيح API الجديدة داخل API_KEYS." );
+                alert( "لم يتم إضافة Groq API Key. ضع المفتاح الجديد داخل API_KEYS." );
                 return;
             }
 
             /* ---------------------------------------------
-               User message
+                User message
             --------------------------------------------- */
             const userDiv = document.createElement('div');
             userDiv.className = 'message user-message';
@@ -300,7 +298,7 @@ Children 3-11 years: بخة واحدة في كل فتحة أنف مرة واحد
             chatMessages.scrollTop = chatMessages.scrollHeight;
 
             /* ---------------------------------------------
-               Bot loading message
+                Bot loading message
             --------------------------------------------- */
             const botDiv = document.createElement('div');
             botDiv.className = 'message bot-message';
@@ -310,7 +308,7 @@ Children 3-11 years: بخة واحدة في كل فتحة أنف مرة واحد
             sendBtn.disabled = true;
 
             /* ---------------------------------------------
-               Add user message
+                Add user message
             --------------------------------------------- */
             messages.push({ role: "user", content: text });
 
@@ -318,7 +316,7 @@ Children 3-11 years: بخة واحدة في كل فتحة أنف مرة واحد
             let lastError = null;
 
             /* =================================================
-               TRY EACH API KEY
+                TRY EACH API KEY
             ================================================= */
             for ( let attempt = 0; attempt < API_KEYS.length; attempt++ ) {
                 const apiKey = getCurrentApiKey();
@@ -329,10 +327,10 @@ Children 3-11 years: بخة واحدة في كل فتحة أنف مرة واحد
                 }
 
                 try {
-                    console.log( "Trying Gemini API key index:", currentKeyIndex );
+                    console.log( "Trying Groq API key index:", currentKeyIndex );
 
                     /* -----------------------------------------
-                       Gemini OpenAI Compatibility API
+                        Groq OpenAI Compatibility API
                     ----------------------------------------- */
                     const response = await fetch( API_URL, {
                         method: "POST",
@@ -347,56 +345,56 @@ Children 3-11 years: بخة واحدة في كل فتحة أنف مرة واحد
                     });
 
                     /* -----------------------------------------
-                       Read response
+                        Read response
                     ----------------------------------------- */
                     const data = await response.json();
 
                     /* -----------------------------------------
-                       API ERROR
+                        API ERROR
                     ----------------------------------------- */
                     if (!response.ok) {
-                        console.error( "Gemini API Error:", response.status, data );
+                        console.error( "Groq API Error:", response.status, data );
                         lastError = new Error( `HTTP ${response.status}: ${ data?.error?.message || response.statusText }` );
                         moveToNextKey();
                         continue;
                     }
 
                     /* -----------------------------------------
-                       Extract response
+                        Extract response
                     ----------------------------------------- */
                     const botReply = data?.choices?.[0]?.message?.content;
 
                     if (!botReply) {
-                        console.error( "Unexpected Gemini response:", data );
-                        lastError = new Error( "Gemini returned an empty response." );
+                        console.error( "Unexpected Groq response:", data );
+                        lastError = new Error( "Groq returned an empty response." );
                         moveToNextKey();
                         continue;
                     }
 
                     /* -----------------------------------------
-                       Display bot reply
+                        Display bot reply
                     ----------------------------------------- */
                     botDiv.innerHTML = botReply;
 
                     /* -----------------------------------------
-                       Save assistant message
+                        Save assistant message
                     ----------------------------------------- */
                     messages.push({ role: "assistant", content: botReply });
                     success = true;
                     break;
 
                 } catch (error) {
-                    console.error( "Gemini request failed:", error );
+                    console.error( "Groq request failed:", error );
                     lastError = error;
                     moveToNextKey();
                 }
             }
 
             /* =================================================
-               ALL KEYS FAILED
+                ALL KEYS FAILED
             ================================================= */
             if (!success) {
-                console.error( "All Gemini API keys failed.", lastError );
+                console.error( "All Groq API keys failed.", lastError );
                 botDiv.innerHTML = `
                     عذراً، النظام مشغول حالياً. <br><br>
                     يرجى التواصل مباشرة مع فريق مجموعة الأمل الطبية عبر الواتساب: <br><br>
@@ -414,7 +412,7 @@ Children 3-11 years: بخة واحدة في كل فتحة أنف مرة واحد
         }
 
         /* =====================================================
-           EVENTS
+            EVENTS
         ===================================================== */
         sendBtn.addEventListener( 'click', sendMessage );
         chatInput.addEventListener( 'keypress', (e) => {
