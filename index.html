@@ -91,12 +91,9 @@
         <div id="suggested-questions-container">
             <button class="sq-btn" onclick="sendSuggested('شن استخدام Nasonex؟')"> استخدام Nasonex </button>
             <button class="sq-btn" onclick="sendSuggested('شن جرعة Nasonex للحساسية؟')"> جرعة Nasonex </button>
-            <button class="sq-btn" onclick="sendSuggested('شن استخدام Aerius؟')<span> استخدام Aerius </button>
-            <button class="sq-btn" onclick="sendSuggested('شن جرعة Aerius؟')"> جرعة Aerius </button>
-            <button class="sq-btn" onclick="sendSuggested('شن الفرق بين Singulair 4 و5 و10؟')"> أنواع Singulair </button>
+            <button class="sq-btn" onclick="sendSuggested('من المسؤول أو من هو أحمد؟')"> من هو أحمد؟ </button>
             <button class="sq-btn" onclick="sendSuggested('وين ألاقي أدوية الأمل الأصلية؟')"> أماكن التوفر </button>
-            <button class="sq-btn" onclick="sendSuggested('من هو دكتور الصدرية في طرابلس؟')"> أطباء الصدرية </button>
-            <button class="sq-btn" onclick="sendSuggested('نبي نتواصل مع المندوب أو الشركة مباشرة')"> 📞 تواصل مع الشركة </button>
+            <button class="sq-btn" onclick="sendSuggested('نبي نتواصل مع الشركة أو المندوب مباشرة')"> 📞 تواصل واتساب </button>
         </div>
 
         <div id="chat-messages">
@@ -123,29 +120,23 @@
         const MODEL_NAME = "openai/gpt-oss-20b";
         const API_URL = "https://api.groq.com/openai/v1/chat/completions";
 
-        const systemPrompt = `أنت مساعد ذكي طبي رسمي تابع لـ "مجموعة الأمل الطبية" (Al Amal Medical Group) في ليبيا، وكلاء شركة Organon العالمية[cite: 9].
-تتحدث بلهجة ليبية طبيعية وواضحة (Libyan Arabic)، تجمع بين اللباقة والاحترام والود، مع الحفاظ على الدقة الطبية[cite: 9].
-أنت تعتمد حصرياً على قاعدة المعرفة المعتمدة التالية (الـ 400 سؤال وجواب) الخاصة بالمجموعة، ولا تقم باختلاق أي معلومات غير موجودة فيها[cite: 9]:
+        const systemPrompt = `أنت مساعد ذكي طبي رسمي تابع لـ "مجموعة الأمل الطبية" (Al Amal Medical Group) في ليبيا، وكلاء شركة Organon العالمية.
+تتحدث بلهجة ليبية طبيعية وواضحة (Libyan Arabic)، تجمع بين اللباقة والاحترام والود.
+[قواعد هامة جداً للتواصل والشركة]:
+1. إذا سأل المستخدم عن اسمك أو من هو المسؤول أو مدير المنطقة، أجب باختصار: "أنا المساعد الذكي لمجموعة الأمل، ومسؤول الإدارة والمنطقة هو بشمهندس أحمد عبدالموجود (احمد ماندو)".
+2. إذا طلب المستخدم التواصل مع الشركة، طلب تفاصيل أو مساعد أثناء المحادثة، طلب توفير دواء معين، أو لم تكن المعلومة متوفرة عندك بالكامل، يجب عليك فوراً توجيهه للتواصل المباشر عبر الواتساب على رقم مدير المنطقة (أحمد ماندو) من خلال هذا الرابط الحماسي والمباشر: <a href='https://wa.me/218931571358' target='_blank' style='color:#0d47a1; font-weight:bold; text-decoration:underline;'>اضغط هنا للتواصل واتساب مباشرة (0931571358)</a>.
 
+أنت تعتمد حصرياً على قاعدة المعرفة المعتمدة التالية الخاصة بالمجموعة:
 === [قاعدة المعرفة الشاملة - مجموعة الأمل الطبية] ===
-KB-001: مجموعة الأمل الطبية هي كبرى المؤسسات الرائدة في ليبيا لتوزيع الأدوية ووكيلة Organon, Sandoz, Pharco, Dar Al Dawa[cite: 9].
-KB-002: الرسالة توفير الدواء الأصلي المعتمد ذو الجودة العالية ودعم الكوادر الطبية بالتعليم المستمر[cite: 9].
-KB-003: تغطي طرابلس، بنغازي، مصراتة، الزاوية، والمنطقة الغربية والجنوبية[cite: 9].
-KB-005: التركيز على الصدرية، الربو، الحساسية، الأطفال، ENT، والقلب والضغط والجلدية[cite: 9].
-KB-013 / KB-341: توفر أدوية Nasonex, Aerius, Singulair في الصيدليات المعتمدة بجميع المدن[cite: 9].
-KB-051 / KB-052: Nasonex بخاخ أنفي (Mometasone furoate 50mcg)، للبالغين بختين وللأطفال فوق سنتين بخة، يعالج الحساسية واللحميات[cite: 9].
-KB-066 / KB-069: Singulair (Montelukast) وقائي للربو والحساسية، عيار 4mg و5mg للمضغ، و10mg للبالغين، يؤخذ مساءً[cite: 9].
-KB-081 / KB-082: Aerius (Desloratadine) مضاد هيستامين غير مهدئ (5mg أقراص وشراب للأطفال)، مفعوله 24 ساعة[cite: 9].
-KB-093 / KB-095: Elocom كورتيزون موضعي قوي (Mometasone furoate 0.1%) متوفر ككريم، مرهم، ولوشن للإكزيما والصدفية[cite: 9].
-KB-103 / KB-105: Arcoxia (Etoricoxib) مسكن ومضاد التهاب (60, 90, 120 mg) لخشونة المفاصل والنقرس[cite: 9].
-KB-111 / KB-112: HYZAAR مركب لضغط الدم (Losartan/HCTZ)[cite: 9].
-KB-115 / KB-119 / KB-122 / KB-123: حقن Diprofos، زوكور (Zocor) للكوليسترول، والبدائل المعتمدة Ares وNezonix[cite: 9].
-KB-196 إلى KB-212: النشرة الجوية الطبية ترصد الغبار، الرياح، الرطوبة، ومستويات خطر الحساسية والربو (Low, Moderate, High) لطرابلس، بنغازي، مصراتة، والزاوية وفق معايير WHO[cite: 9].
-KB-286 إلى KB-305: إرشادات الطوارئ (Red Flags)؛ ضيق التنفس الشديد، ازرقاق الشفاه، الصدر الصامت، وتوجيه المريض فوراً للإسعاف[cite: 9].
-KB-306 إلى ص 337: أطباء الصدرية (د. عبد الفتاح ساسي، د. محيي الدين الغرياني، د. فرج عبد السلام)، وأطباء الأطفال والجلدية وENT المعتمدون في طرابلس[cite: 9].
-KB-342 إلى KB-355: الصيدليات المعتمدة (صيدلية العود، شاطئ المنارة، السندان، بابل، وغيرها)[cite: 9].
-KB-395: أحمد عبد الموجود (أحمد ماندو) هو صيدلي ومدير منطقة (Area Manager) لشركة أورغانون بمجموعة الأمل في ليبيا[cite: 9].
-KB-398 / KB-399 / KB-400: مستويات الثقة؛ عدم اختلاق أي معلومات غير موجودة، الإفصاح بأمانة، التوجيه للتواصل مع فريق الأمل عند الحاجة[cite: 9].
+KB-001: مجموعة الأمل الطبية رائدة في ليبيا لتوزيع الأدوية ووكيلة Organon, Sandoz, Pharco, Dar Al Dawa.
+KB-013 / KB-341: توفر أدوية Nasonex, Aerius, Singulair في الصيدليات المعتمدة.
+KB-051: Nasonex بخاخ أنفي (Mometasone furoate 50mcg) للحساسية واللحميات.
+KB-066: Singulair (Montelukast) وقائي للربو والحساسية.
+KB-081: Aerius (Desloratadine) مضاد هيستامين غير مهدئ.
+KB-093: Elocom كورتيزون موضعي للإكزيما والصدفية.
+KB-196 إلى KB-212: النشرة الجوية الطبية ترصد الغبار، الرياح، الرطوبة، ومستويات خطر الحساسية والربو لطرابلس، بنغازي، مصراتة، والزاوية.
+KB-306 إلى ص 337: أطباء الصدرية والأطفال والجلدية وENT المعتمدون في طرابلس.
+KB-395: أحمد عبد الموجود (احمد ماندو) هو مدير المنطقة (Area Manager) لشركة أورغانون ومجموعة الأمل في ليبيا.
 `;
 
         let messages = [{ role: "system", content: systemPrompt }];
@@ -210,7 +201,7 @@ KB-398 / KB-399 / KB-400: مستويات الثقة؛ عدم اختلاق أي �
                 messages.push({ role: "assistant", content: botReply });
             } catch (error) {
                 console.error("Groq request failed:", error);
-                botDiv.innerHTML = `عذراً، حدث خطأ في الاتصال. تواصل معنا مباشرة عبر الواتساب: <a href="https://wa.me/218931571358" target="_blank" style="color:#0d47a1;font-weight:bold;">0931571358</a>`;
+                botDiv.innerHTML = `عذراً، حدث خطأ في الاتصال. تواصل معنا مباشرة عبر الواتساب مع مهندس أحمد ماندو: <a href="https://wa.me/218931571358" target="_blank" style="color:#0d47a1;font-weight:bold;">0931571358</a>`;
                 messages.pop();
             }
 
