@@ -3,7 +3,7 @@ from datetime import datetime
 from html2image import Html2Image
 from PIL import Image
 
-# استيراد حاسبة الخطر وطبقة التحقق الجديدة من الطقس
+# استيراد حاسبة الخطر وطبقة التحقق الجديدة من الطقس (لتكون داتا اليوم بالكامل ومضمونة)
 from engine.risk_calculator import RiskCalculator
 from weather_validator import WeatherAccuracyJudge
 
@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 
 class BulletinGenerator:
     def __init__(self):
-        # استخدام قاضي الطقس الجديد بدلاً من weather_client القديم
+        # استخدام قاضي الطقس لضمان دقة توقعات اليوم الكامل
         self.weather_judge = WeatherAccuracyJudge()
         self.risk_calculator = RiskCalculator()
         
@@ -94,13 +94,13 @@ class BulletinGenerator:
                 logger.error(f"❌ حدث خطأ في {key}: {e}")
         self.clean_unwanted_files()
         
-        # استدعاء دالة إنشاء الموقع بعد توليد الصور
+        # استدعاء دالة الحماية للموقع (تم عزل index.html تماماً)
         self.generate_website(cities)
         
-        logger.info("🧹 تم إنشاء الصور والموقع بنجاح!")
+        logger.info("🧹 تم إنشاء صور الإنفوجرافيك بنجاح وحماية المساعد الذكي!")
 
     def _generate_city_infographic(self, city_data):
-        # 1. الحصول على الأيام الخمسة الموثقة والمقارنة مباشرة من القاضي
+        # 1. الحصول على الأيام الخمسة الموثقة والمقارنة مباشرة لتمثيل اليوم بالكامل
         daily_data = self.weather_judge.get_validated_forecast(city_data['latitude'], city_data['longitude'], city_data['timezone'])
         
         if not daily_data:
@@ -115,7 +115,6 @@ class BulletinGenerator:
         cards_html = ""
         
         for day in daily_data:
-            # يتم الاعتماد الآن على القيم اليومية النقية لحساب المخاطر
             risk = self.risk_calculator.calculate_daily_risk(day)
             nose = risk['nose']
             breath = risk['breath']
@@ -203,134 +202,10 @@ class BulletinGenerator:
         logger.info(f"✅ تم حفظ الصورة: {out_name}")
 
     def generate_website(self, cities):
-        html = """<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>النشرة الطبية - مجموعة الأمل</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Cairo', sans-serif; background: #eef2f3; margin: 0; padding: 20px; text-align: center; color: #333; }
-        h1 { color: #0d47a1; margin-bottom: 5px; font-weight: 900; }
-        p { font-size: 1.2rem; color: #555; margin-top: 0; margin-bottom: 30px; font-weight: 700; }
-        .grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 30px; }
-        .city-card { width: 100%; max-width: 500px; }
-        img { width: 100%; border-radius: 20px; box-shadow: 0 15px 30px rgba(0,0,0,0.15); transition: transform 0.3s; }
-        img:hover { transform: scale(1.02); }
-        .footer { margin-top: 40px; font-size: 0.9rem; color: #777; }
-        
-        /* تصميم واجهة مساعد الأمل الذكي */
-        #ai-chat-container {
-            max-width: 600px;
-            margin: 40px auto 20px auto;
-            background: #ffffff;
-            border-radius: 20px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            overflow: hidden;
-            border-right: 5px solid #0d47a1;
-            text-align: right;
-        }
-        .chat-header {
-            background: #0d47a1;
-            color: white;
-            padding: 15px 20px;
-            font-weight: 900;
-            font-size: 1.1rem;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .chat-body {
-            padding: 20px;
-            max-height: 300px;
-            overflow-y: auto;
-            background: #f9fbfd;
-            font-size: 0.95rem;
-            color: #444;
-        }
-        .chat-footer {
-            padding: 15px;
-            background: #fff;
-            border-top: 1px solid #eee;
-            display: flex;
-            gap: 10px;
-        }
-        .chat-input {
-            flex: 1;
-            padding: 10px 15px;
-            border: 1px solid #ccc;
-            border-radius: 10px;
-            font-family: 'Cairo', sans-serif;
-            outline: none;
-        }
-        .chat-btn {
-            background: #0d47a1;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 10px;
-            font-weight: bold;
-            cursor: pointer;
-            font-family: 'Cairo', sans-serif;
-        }
-        .chat-btn:hover { background: #1565c0; }
-        .message { margin-bottom: 12px; padding: 10px 14px; border-radius: 12px; line-height: 1.5; }
-        .bot-msg { background: #eef2f3; color: #333; margin-left: 20px; }
-        .user-msg { background: #0d47a1; color: white; margin-right: 20px; text-align: left; }
-    </style>
-</head>
-<body>
-    <h1>🌤️ النشرة الطبية لمرضى الحساسية والربو</h1>
-    <p>برعاية مجموعة الأمل الطبية - Organon</p>
-    <div class="grid">
-"""
-        for city in cities.values():
-            html += f'\n        <div class="city-card"><img src="output/infographic_{city["id"]}.png" alt="نشرة {city["name_ar"]}"></div>'
-            
-        html += """
-    </div>
-
-    <!-- واجهة مساعد الأمل الذكي داخل الموقع -->
-    <div id="ai-chat-container">
-        <div class="chat-header">
-            <span>🤖 مساعد الأمل الذكي (AI-powered Assistant)</span>
-        </div>
-        <div class="chat-body" id="chat-messages">
-            <div class="message bot-msg">أهلاً بك زميلي العزيز. أنا مساعد الأمل الذكي، جاهز للإجابة على استفساراتك حول النشرة الطبية، معلومات الأدوية، والجرعات الموثقة. تفضل بطرح سؤالك.</div>
-        </div>
-        <div class="chat-footer">
-            <input type="text" id="user-input" class="chat-input" placeholder="اكتب استفسارك هنا..." onkeypress="if(event.key === 'Enter') sendMessage();">
-            <button class="chat-btn" onclick="sendMessage()">إرسال</button>
-        </div>
-    </div>
-
-    <script>
-        function sendMessage() {
-            const input = document.getElementById('user-input');
-            const messages = document.getElementById('chat-messages');
-            const text = input.value.trim();
-            if(!text) return;
-
-            messages.innerHTML += `<div class="message user-msg">${text}</div>`;
-            input.value = '';
-            messages.scrollTop = messages.scrollHeight;
-
-            setTimeout(() => {
-                messages.innerHTML += `<div class="message bot-msg">شكراً لتواصلك. تم تسجيل استفسارك وسيتم توجيهه لقسم المعلومات الطبية بمجموعة الأمل. (ملاحظة: المساعد أداة توجيهية ولا يُغني عن استشارة الطبيب أو الصيدلي).</div>`;
-                messages.scrollTop = messages.scrollHeight;
-            }, 1000);
-        }
-    </script>
-
-    <div class="footer">تم التحديث تلقائياً بواسطة Medical Weather Engine</div>
-</body>
-</html>"""
-        
-        index_path = os.path.join(self.base_project_dir, "index.html")
-        with open(index_path, "w", encoding="utf-8") as f:
-            f.write(html)
-        logger.info("🌐 تم إنشاء صفحة الموقع مع مساعد الأمل الذكي بنجاح: index.html")
+        # 🔒 حماية صارمة: تم عزل ملف index.html تماماً لكي لا يقترب منه السكريبت 
+        # ولن يتم المساس بمساعد الأمل الذكي أو مفاتيح Groq الخاصة بك أبداً.
+        logger.info("🛡️ تم الحفاظ على ملف index.html ومساعد الأمل الذكي بأمان تام دون أي تعديل.")
+        pass
 
 if __name__ == "__main__":
     BulletinGenerator().generate_all_bulletins()
