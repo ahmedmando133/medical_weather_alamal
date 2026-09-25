@@ -14,30 +14,8 @@
         img { width: 100%; border-radius: 20px; box-shadow: 0 15px 30px rgba(0,0,0,0.15); transition: transform 0.3s; }
         img:hover { transform: scale(1.02); }
         .footer { margin-top: 40px; font-size: 0.9rem; color: #777; }
-    </style>
-    
-    <!-- كود تتبع Microsoft Clarity -->
-    <script type="text/javascript">
-        (function(c,l,a,r,i,t,y){
-            c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-            t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-            y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-        })(window, document, "clarity", "script", "ynixc5tdro");
-    </script>
-</head>
-<body>
-    <h1>🌤 النشرة الطبية لمرضى الحساسية والربو</h1>
-    <p>برعاية مجموعة الأمل الطبية - Organon</p>
-    <div class="grid">
-        <div class="city-card"><img src="output/infographic_tripoli.png" alt="نشرة طرابلس"></div>
-        <div class="city-card"><img src="output/infographic_benghazi.png" alt="نشرة بنغازي"></div>
-        <div class="city-card"><img src="output/infographic_misrata.png" alt="نشرة مصراتة"></div>
-        <div class="city-card"><img src="output/infographic_zawiya.png" alt="نشرة الزاوية"></div>
-    </div>
-    <div class="footer">تم التحديث تلقائياً بواسطة Medical Weather Engine</div>
 
-    <!-- بداية واجهة المساعد الذكي (AI Chat Widget) -->
-    <style>
+        /* ========================= AI CHAT BUTTON ========================== */
         #chat-button {
             position: fixed; bottom: 20px; right: 20px;
             background-color: #0d47a1; color: white;
@@ -58,8 +36,8 @@
             font-weight: 900; font-size: 16px; display: flex; justify-content: space-between; align-items: center;
         }
         #close-chat { cursor: pointer; font-weight: bold; font-size: 20px; }
-        
-        /* قسم الأسئلة المقترحة */
+
+        /* ========================= SUGGESTED QUESTIONS ========================== */
         #suggested-questions-container {
             background: #f8f9fa; padding: 10px; border-bottom: 1px solid #eee;
             display: flex; flex-wrap: wrap; gap: 6px; max-height: 120px; overflow-y: auto;
@@ -71,13 +49,16 @@
         }
         .sq-btn:hover { background: #0d47a1; color: white; border-color: #0d47a1; }
 
+        /* ========================= MESSAGES ========================== */
         #chat-messages {
             flex-grow: 1; padding: 15px; overflow-y: auto;
             display: flex; flex-direction: column; gap: 10px; background: #f4f6f9;
         }
-        .message { padding: 12px 16px; border-radius: 15px; max-width: 85%; font-size: 14px; line-height: 1.6; font-weight: 600; }
+        .message { padding: 12px 16px; border-radius: 15px; max-width: 85%; font-size: 14px; line-height: 1.6; font-weight: 600; word-wrap: break-word; }
         .bot-message { background: white; align-self: flex-start; border-bottom-right-radius: 4px; color: #333; border: 1px solid #e0e0e0; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
         .user-message { background: #0d47a1; color: white; align-self: flex-end; border-bottom-left-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+
+        /* ========================= INPUT ========================== */
         #chat-input-area {
             display: flex; padding: 10px; border-top: 1px solid #ddd; background: white; gap: 8px;
         }
@@ -89,37 +70,78 @@
             border-radius: 8px; cursor: pointer; font-weight: 900; font-family: 'Cairo', sans-serif; transition: background 0.2s;
         }
         #send-btn:hover { background: #0a3578; }
+        #send-btn:disabled { background: #999; cursor: not-allowed; }
     </style>
 
+    <!-- Microsoft Clarity -->
+    <script type="text/javascript">
+        (function(c,l,a,r,i,t,y){
+            c[a]=c[a]||function(){ (c[a].q=c[a].q||[]).push(arguments) };
+            t=l.createElement(r); t.async=1; t.src="https://www.clarity.ms/tag/"+i;
+            y=l.getElementsByTagName(r)[0]; y.parentNode.insertBefore(t,y);
+        })(window, document, "clarity", "script", "ynixc5tdro");
+    </script>
+</head>
+<body>
+    <h1>🌤 النشرة الطبية لمرضى الحساسية والربو</h1>
+    <p>برعاية مجموعة الأمل الطبية - Organon</p>
+    <div class="grid">
+        <div class="city-card">
+            <img src="output/infographic_tripoli.png" alt="نشرة طرابلس">
+        </div>
+        <div class="city-card">
+            <img src="output/infographic_benghazi.png" alt="نشرة بنغازي">
+        </div>
+        <div class="city-card">
+            <img src="output/infographic_misrata.png" alt="نشرة مصراتة">
+        </div>
+        <div class="city-card">
+            <img src="output/infographic_zawiya.png" alt="نشرة الزاوية">
+        </div>
+    </div>
+    <div class="footer">
+        تم التحديث تلقائياً بواسطة Medical Weather Engine
+    </div>
+
+    <!-- ========================= AI CHAT WIDGET ========================== -->
     <button id="chat-button">💬</button>
 
     <div id="chat-window">
         <div id="chat-header">
-            <span>مساعد الأمل الطبي الذكي</span>
-            <span id="close-chat">✖️</span>
-        </div>
-        
-        <div id="suggested-questions-container">
-            <button class="sq-btn" onclick="sendSuggested('شن استخدام Nasonex؟')">استخدام Nasonex</button>
-            <button class="sq-btn" onclick="sendSuggested('شن جرعة Nasonex للحساسية؟')">جرعة Nasonex</button>
-            <button class="sq-btn" onclick="sendSuggested('شن استخدام Aerius؟')">استخدام Aerius</button>
-            <button class="sq-btn" onclick="sendSuggested('شن جرعة Aerius؟')">جرعة Aerius</button>
-            <button class="sq-btn" onclick="sendSuggested('شن الفرق بين Singulair 4 و5 و10؟')">أنواع Singulair</button>
-            <button class="sq-btn" onclick="sendSuggested('شن الفرق بين الدواء الأصلي واللي من غير ستيكر؟')">الستيكر الأصلي</button>
-            <button class="sq-btn" onclick="sendSuggested('وين نقدر نلقى الدواء؟')">أماكن التوفر</button>
-            <button class="sq-btn" onclick="sendSuggested('نبي نتواصل مع المندوب أو الشركة مباشرة')">📞 تواصل مع الشركة</button>
+            <span> مساعد الأمل الطبي الذكي </span>
+            <span id="close-chat"> ✖️ </span>
         </div>
 
-        <div id="chat-messages">
-            <div class="message bot-message">أهلاً بك طبيبنا الفاضل. أنا المساعد الطبي الرقمي لمجموعة الأمل. كيف نقدر نساعدك اليوم بخصوص أدوية الحساسية، الربو، أو التفاعلات الدوائية؟</div>
+        <!-- Suggested Questions -->
+        <div id="suggested-questions-container">
+            <button class="sq-btn" onclick="sendSuggested('شن استخدام Nasonex؟')"> استخدام Nasonex </button>
+            <button class="sq-btn" onclick="sendSuggested('شن جرعة Nasonex للحساسية؟')"> جرعة Nasonex </button>
+            <button class="sq-btn" onclick="sendSuggested('شن استخدام Aerius؟')"> استخدام Aerius </button>
+            <button class="sq-btn" onclick="sendSuggested('شن جرعة Aerius؟')"> جرعة Aerius </button>
+            <button class="sq-btn" onclick="sendSuggested('شن الفرق بين Singulair 4 و5 و10؟')"> أنواع Singulair </button>
+            <button class="sq-btn" onclick="sendSuggested('شن الفرق بين الدواء الأصلي واللي من غير ستيكر؟')"> الستيكر الأصلي </button>
+            <button class="sq-btn" onclick="sendSuggested('وين نقدر نلقى الدواء؟')"> أماكن التوفر </button>
+            <button class="sq-btn" onclick="sendSuggested('نبي نتواصل مع المندوب أو الشركة مباشرة')"> 📞 تواصل مع الشركة </button>
         </div>
+
+        <!-- Messages -->
+        <div id="chat-messages">
+            <div class="message bot-message">
+                أهلاً بك طبيبنا الفاضل. أنا المساعد الطبي الرقمي لمجموعة الأمل. كيف نقدر نساعدك اليوم بخصوص أدوية الحساسية، الربو، أو التفاعلات الدوائية؟
+            </div>
+        </div>
+
+        <!-- Input -->
         <div id="chat-input-area">
             <input type="text" id="chat-input" placeholder="اكتب استفسارك هنا..." dir="rtl">
-            <button id="send-btn">إرسال</button>
+            <button id="send-btn"> إرسال </button>
         </div>
     </div>
 
     <script>
+        /* =====================================================
+           DOM ELEMENTS
+        ===================================================== */
         const chatButton = document.getElementById('chat-button');
         const chatWindow = document.getElementById('chat-window');
         const closeChat = document.getElementById('close-chat');
@@ -127,54 +149,89 @@
         const chatInput = document.getElementById('chat-input');
         const chatMessages = document.getElementById('chat-messages');
 
+        /* =====================================================
+           GEMINI API CONFIGURATION
+        ===================================================== */
         const API_KEYS = [
-            'AQ.Ab8RN6L_MGSHTBjwTz8KbwISKNllRUXjE8fypV4wYg9u5EgfrA',
-            'AQ.Ab8RN6JBc-ODsNMT-fSaUJP4HWc-ODFKfQg93IO1RO8aGKJp-Q',
-            'AQ.Ab8RN6Ld9FFtP8A8NH-xDWHs48yuaJawrNJethL4ZJokoR1d7Q'
+            "AQ.Ab8RN6L_MGSHTBjwTz8KbwISKNllRUXjE8fypV4wYg9u5EgfrA",
+            "AQ.Ab8RN6JBc-ODsNMT-fSaUJP4HWc-ODFKfQg93IO1RO8aGKJp-Q",
+            "AQ.Ab8RN6Ld9FFtP8A8NH-xDWHs48yuaJawrNJethL4ZJokoR1d7Q"
         ];
+
+        /* =====================================================
+           MODEL
+        ===================================================== */
+        const MODEL_NAME = "gemini-3.8-flash";
+
+        /* =====================================================
+           GOOGLE GEMINI OPENAI-COMPATIBLE ENDPOINT
+        ===================================================== */
+        const API_URL = "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions";
+
+        /* =====================================================
+           KEY ROTATION
+        ===================================================== */
         let currentKeyIndex = 0;
-        
+
+        /* =====================================================
+           SYSTEM PROMPT
+        ===================================================== */
         const systemPrompt = `أنت Medical Product Information Assistant تابع لمجموعة "الأمل الطبية" (Al Amal Medical Group) وكلاء شركة Organon في ليبيا.
-اللهجة: ليبية عامية، ودودة، محترمة، بسيطة جداً، غير آلية. (مثال: "بالنسبة لجرعة البالغين، الجرعة المعتادة هي...").
+
+اللهجة: ليبية عامية، ودودة، محترمة، بسيطة جداً، غير آلية.
+مثال: "بالنسبة لجرعة البالغين، الجرعة المعتادة هي..."
 
 أنت تعتمد حصرياً على Fixed Verified Knowledge التالية. ممنوع الهلوسة (Never Hallucinate). إذا كان السؤال خارج هذه القواعد، وجه المستخدم فوراً لفريق مجموعة الأمل الطبية.
 
-[Fixed Knowledge - مجموعة الأمل و Organon]:
+[Fixed Knowledge - مجموعة الأمل و Organon]
 نحن مجموعة الأمل الطبية، وكلاء شركة Organon.
 
-[Fixed Knowledge - التوفر Availability]:
+[Fixed Knowledge - التوفر Availability]
 أدوية Nasonex, Aerius, Singulair متوفرة في أغلب الصيدليات، لكن يجب التأكد من وجود ستيكر مجموعة الأمل الطبية الأصلي. لا تضمن توفرها في صيدلية معينة.
 
-[Fixed Knowledge - ستيكر الأمل الأصلي (Safety)]:
+[Fixed Knowledge - ستيكر الأمل الأصلي Safety]
 إذا سُئلت عن الفرق أو الأدوية بدون ستيكر: "الستيكر الأصلي مهم جدًا لأنه يساعدك تتأكد إن الدواء داخل في سلسلة توريد موثوقة ومخصصة للمنتج الأصلي. المنتج اللي من غير ستيكر لازم تتعامل معاه بحذر، لأنك ممكن ما تقدرش تتأكد من مصدره وطريقة تخزينه ونقله، وده بيأثر على الفعالية والأمان. باش تضمن الجودة، تأكد من وجود ستيكر مجموعة الأمل الطبية الأصلي."
 
-[Fixed Knowledge - Nasonex]:
-- الجرعة للحساسية (Adults & >=12 years): بختين في كل فتحة أنف مرة واحدة يوميًا. (2 sprays in each nostril once daily).
-- الجرعة (Children 3-11 years): بخة واحدة في كل فتحة أنف مرة واحدة يوميًا. (1 spray in each nostril once daily).
+[Nasonex]
+الجرعة للحساسية Adults & >=12 years: بختين في كل فتحة أنف مرة واحدة يوميًا.
+Children 3-11 years: بخة واحدة في كل فتحة أنف مرة واحدة يوميًا.
 
-[Fixed Knowledge - Aerius (Desloratadine)]:
-- الحبوب (Tablet) للبالغين: مرة واحدة يوميًا.
-- دواء الشرب (Syrup) للأطفال 3-12 سنة: 5 mL مرة واحدة يوميًا.
-- دواء الشرب للأطفال 1-<3 سنوات: 2.5 mL مرة واحدة يوميًا.
+[Aerius - Desloratadine]
+الحبوب Tablet للبالغين: مرة واحدة يوميًا.
+دواء الشرب Syrup للأطفال 3-12 سنة: 5 mL مرة واحدة يوميًا.
+دواء الشرب للأطفال 1-<3 سنوات: 2.5 mL مرة واحدة يوميًا.
 يجب التوضيح دائماً بين الحبوب ودواء الشرب.
 
-[Fixed Knowledge - Singulair]:
-يستخدم للحساسية والربو. التركيزات: 4mg, 5mg, 10mg. (تجنب وصف جرعات دقيقة له إلا إذا طلب، ووجه للطبيب).
+[Singulair]
+يستخدم للحساسية والربو. التركيزات: 4mg 5mg 10mg
+تجنب وصف جرعات دقيقة له إلا إذا طلب المستخدم، ووجه للطبيب.
 
-[Human Escalation - التصعيد لفريق مجموعة الأمل الطبية]:
+[Human Escalation - التصعيد لفريق مجموعة الأمل الطبية]
 إذا سأل المستخدم للتواصل مع الشركة، أو سأل عن دواء ناقص، أو سؤال يحتاج تشخيص أو تفاعل دوائي معقد، قل:
 "لو ما لقيتش الدواء، أو عندك سؤال خاص بالمنتج ومش لاقي له إجابة واضحة، أو حاب تتواصل مع الشركة، تقدر تتواصل مباشرة مع فريق مجموعة الأمل الطبية على واتساب من خلال الرابط هذا: <a href='https://wa.me/218931571358' target='_blank' style='color:#0d47a1; font-weight:bold; text-decoration:underline;'>اضغط هنا للتواصل واتساب (0931571358)</a>"
-يجب أن تستخدم كود HTML الخاص بالرابط كما هو مكتوب أعلاه בדיוק.
+يجب أن تستخدم كود HTML الخاص بالرابط كما هو مكتوب أعلاه.
 
-قواعد الأمان (Guardrails):
+[Safety Guardrails]
 1. أضف دائماً تنبيهاً قصيراً بعد الجرعات: "لكن خليك متأكد إن المعلومات هذي ما تغنيش عن استشارة طبيبك أو الصيدلي، خصوصًا لو الحالة لطفل."
-2. لا تشخص، لا تغير وصفة، لا تخمن. أجب مباشرة وبشكل مختصر جداً أولاً، ثم التنبيه.`;
+2. لا تشخص.
+3. لا تغير وصفة.
+4. لا تخمن.
+5. أجب مباشرة وبشكل مختصر جداً أولاً، ثم التنبيه.
+6. إذا لم تكن الإجابة موجودة في Fixed Knowledge، لا تخترع إجابة.
+7. في حالة عدم وجود المعلومة، وجّه المستخدم لفريق مجموعة الأمل الطبية.
+8. لا تدّعي معرفة توفر الدواء في صيدلية محددة.
+9. حافظ على اللهجة الليبية الودية والمهنية.`;
 
-        // مصفوفة الرسائل بالصيغة القياسية لـ OpenAI
+        /* =====================================================
+           CONVERSATION
+        ===================================================== */
         let messages = [
             { role: "system", content: systemPrompt }
         ];
 
+        /* =====================================================
+           OPEN / CLOSE CHAT
+        ===================================================== */
         chatButton.addEventListener('click', () => {
             chatWindow.style.display = chatWindow.style.display === 'flex' ? 'none' : 'flex';
         });
@@ -183,81 +240,188 @@
             chatWindow.style.display = 'none';
         });
 
+        /* =====================================================
+           SUGGESTED QUESTION
+        ===================================================== */
         function sendSuggested(question) {
             chatInput.value = question;
             sendMessage();
         }
 
+        /* =====================================================
+           SAFE HTML ESCAPE
+           Prevent user input from being interpreted as HTML.
+        ===================================================== */
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        /* =====================================================
+           GET CURRENT API KEY
+        ===================================================== */
+        function getCurrentApiKey() {
+            return API_KEYS[currentKeyIndex];
+        }
+
+        /* =====================================================
+           MOVE TO NEXT KEY
+        ===================================================== */
+        function moveToNextKey() {
+            currentKeyIndex = (currentKeyIndex + 1) % API_KEYS.length;
+        }
+
+        /* =====================================================
+           SEND MESSAGE
+        ===================================================== */
         async function sendMessage() {
             const text = chatInput.value.trim();
-            if (!text) return;
+            if (!text) { return; }
 
+            /* ---------------------------------------------
+               Check API keys
+            --------------------------------------------- */
+            const validKeys = API_KEYS.filter( key => key && !key.startsWith("YOUR_") && key.trim().length > 10 );
+            if (validKeys.length === 0) {
+                alert( "لم يتم إضافة Gemini API Key. ضع مفاتيح API الجديدة داخل API_KEYS." );
+                return;
+            }
+
+            /* ---------------------------------------------
+               User message
+            --------------------------------------------- */
             const userDiv = document.createElement('div');
             userDiv.className = 'message user-message';
-            userDiv.textContent = text;
+            userDiv.textContent = escapeHtml(text);
             chatMessages.appendChild(userDiv);
+
             chatInput.value = '';
             chatMessages.scrollTop = chatMessages.scrollHeight;
 
+            /* ---------------------------------------------
+               Bot loading message
+            --------------------------------------------- */
             const botDiv = document.createElement('div');
             botDiv.className = 'message bot-message';
             botDiv.textContent = 'جاري المعالجة...';
             chatMessages.appendChild(botDiv);
 
-            // إضافة رسالة المستخدم للمصفوفة
+            sendBtn.disabled = true;
+
+            /* ---------------------------------------------
+               Add user message
+            --------------------------------------------- */
             messages.push({ role: "user", content: text });
 
             let success = false;
-            
-            for (let i = 0; i < API_KEYS.length; i++) {
+            let lastError = null;
+
+            /* =================================================
+               TRY EACH API KEY
+            ================================================= */
+            for ( let attempt = 0; attempt < API_KEYS.length; attempt++ ) {
+                const apiKey = getCurrentApiKey();
+
+                if ( !apiKey || apiKey.startsWith("YOUR_") ) {
+                    moveToNextKey();
+                    continue;
+                }
+
                 try {
-                    console.log("Trying API key index:", currentKeyIndex); 
-                    
-                    // استخدام رابط التوافق مع OpenAI الخاص بجوجل
-                    const response = await fetch('https://generativelanguage.googleapis.com/v1beta/openai/chat/completions', {
-                        method: 'POST',
-                        headers: { 
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${API_KEYS[currentKeyIndex]}`
+                    console.log( "Trying Gemini API key index:", currentKeyIndex );
+
+                    /* -----------------------------------------
+                       Gemini OpenAI Compatibility API
+                    ----------------------------------------- */
+                    const response = await fetch( API_URL, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Authorization": `Bearer ${apiKey}`
                         },
-                        body: JSON.stringify({ 
-                            model: "gemini-1.5-flash", // تم تغيير الموديل هنا
-                            messages: messages 
+                        body: JSON.stringify({
+                            model: MODEL_NAME,
+                            messages: messages
                         })
                     });
-                    
-                    if (!response.ok) {
-                        console.error(`API Error for key ${currentKeyIndex}:`, response.status, response.statusText);
-                        throw new Error(`API Error: ${response.status}`);
-                    }
-                    
+
+                    /* -----------------------------------------
+                       Read response
+                    ----------------------------------------- */
                     const data = await response.json();
-                    
-                    const botReply = data.choices[0].message.content; 
-                    
+
+                    /* -----------------------------------------
+                       API ERROR
+                    ----------------------------------------- */
+                    if (!response.ok) {
+                        console.error( "Gemini API Error:", response.status, data );
+                        lastError = new Error( `HTTP ${response.status}: ${ data?.error?.message || response.statusText }` );
+                        moveToNextKey();
+                        continue;
+                    }
+
+                    /* -----------------------------------------
+                       Extract response
+                    ----------------------------------------- */
+                    const botReply = data?.choices?.[0]?.message?.content;
+
+                    if (!botReply) {
+                        console.error( "Unexpected Gemini response:", data );
+                        lastError = new Error( "Gemini returned an empty response." );
+                        moveToNextKey();
+                        continue;
+                    }
+
+                    /* -----------------------------------------
+                       Display bot reply
+                    ----------------------------------------- */
                     botDiv.innerHTML = botReply;
+
+                    /* -----------------------------------------
+                       Save assistant message
+                    ----------------------------------------- */
                     messages.push({ role: "assistant", content: botReply });
                     success = true;
-                    break; 
+                    break;
+
                 } catch (error) {
-                    console.warn(`Key at index ${currentKeyIndex} failed. Trying next... Error details:`, error);
-                    currentKeyIndex = (currentKeyIndex + 1) % API_KEYS.length;
+                    console.error( "Gemini request failed:", error );
+                    lastError = error;
+                    moveToNextKey();
                 }
             }
 
+            /* =================================================
+               ALL KEYS FAILED
+            ================================================= */
             if (!success) {
-                botDiv.innerHTML = 'عذراً، النظام مشغول حالياً. يرجى التواصل مباشرة مع فريق مجموعة الأمل الطبية عبر الواتساب: <a href="https://wa.me/218931571358" target="_blank" style="color:#0d47a1; font-weight:bold; text-decoration:underline;">اضغط هنا (0931571358)</a>';
-                messages.pop(); 
+                console.error( "All Gemini API keys failed.", lastError );
+                botDiv.innerHTML = `
+                    عذراً، النظام مشغول حالياً. <br><br>
+                    يرجى التواصل مباشرة مع فريق مجموعة الأمل الطبية عبر الواتساب: <br><br>
+                    <a href="https://wa.me/218931571358" target="_blank" style="color:#0d47a1;font-weight:bold;text-decoration:underline;" >
+                        اضغط هنا للتواصل (0931571358)
+                    </a>
+                `;
+
+                /* Remove failed user message from conversation history so the next attempt starts clean. */
+                messages.pop();
             }
-            
+
+            sendBtn.disabled = false;
             chatMessages.scrollTop = chatMessages.scrollHeight;
         }
 
-        sendBtn.addEventListener('click', sendMessage);
-        chatInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') sendMessage();
+        /* =====================================================
+           EVENTS
+        ===================================================== */
+        sendBtn.addEventListener( 'click', sendMessage );
+        chatInput.addEventListener( 'keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
         });
     </script>
-    <!-- نهاية واجهة المساعد الذكي -->
 </body>
 </html>
