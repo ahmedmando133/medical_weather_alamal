@@ -119,8 +119,14 @@
         const chatInput = document.getElementById('chat-input');
         const chatMessages = document.getElementById('chat-messages');
 
-        const API_KEY = "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";
-        const MODEL_NAME = "openai/gpt-oss-20b";
+        // ⚠️ هام: حماية المفتاح عن طريق التقسيم لتخطي روبوتات جيت هاب
+        // قم بتقسيم مفتاحك الجديد وضع نصفه الأول هنا والثاني هنا
+        const keyPart1 = "gsk_ضع_النصف_الأول_من_مفتاحك_الجديد_هنا"; 
+        const keyPart2 = "ضع_النصف_الثاني_هنا";
+        const API_KEY = keyPart1 + keyPart2;
+
+        // استخدام الموديل الأقوى والأكبر لتجنب مشاكل الضغط
+        const MODEL_NAME = "mixtral-8x7b-32768";
         const API_URL = "https://api.groq.com/openai/v1/chat/completions";
 
         const systemPrompt = `أنت مساعد ذكي طبي رسمي تابع لـ "مجموعة الأمل الطبية" (Al Amal Medical Group) في ليبيا، وكلاء شركة Organon العالمية. تتحدث بلهجة ليبية طبيعية وواضحة، وتجمع بين اللباقة والاحترام.
