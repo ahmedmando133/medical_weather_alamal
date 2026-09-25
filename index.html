@@ -127,7 +127,6 @@
         const chatInput = document.getElementById('chat-input');
         const chatMessages = document.getElementById('chat-messages');
 
-        // المفاتيح كاملة وجاهزة
         const API_KEYS = [
             'AQ.Ab8RN6L_MGSHTBjwTz8KbwISKNllRUXjE8fypV4wYg9u5EgfrA',
             'AQ.Ab8RN6JBc-ODsNMT-fSaUJP4HWc-ODFKfQg93IO1RO8aGKJp-Q',
@@ -171,9 +170,10 @@
 1. أضف دائماً تنبيهاً قصيراً بعد الجرعات: "لكن خليك متأكد إن المعلومات هذي ما تغنيش عن استشارة طبيبك أو الصيدلي، خصوصًا لو الحالة لطفل."
 2. لا تشخص، لا تغير وصفة، لا تخمن. أجب مباشرة وبشكل مختصر جداً أولاً، ثم التنبيه.`;
 
+        // تم التعديل بالكامل لتتوافق مع نظام OpenAI 
         let chatHistory = [
-            { role: "user", parts: [{ text: systemPrompt }] },
-            { role: "model", parts: [{ text: "علم. سأرد باللهجة الليبية كمساعد طبي تابع لمجموعة الأمل، سأستخدم الـ Fixed Knowledge فقط، وسأوجه المريض لفريق مجموعة الأمل الطبية عند الحاجة مع توفير رابط الواتساب المباشر." }] }
+            { role: "system", content: systemPrompt },
+            { role: "assistant", content: "علم. سأرد باللهجة الليبية كمساعد طبي تابع لمجموعة الأمل، سأستخدم الـ Fixed Knowledge فقط، وسأوجه المريض لفريق مجموعة الأمل الطبية عند الحاجة مع توفير رابط الواتساب المباشر." }
         ];
 
         chatButton.addEventListener('click', () => {
@@ -205,26 +205,35 @@
             botDiv.textContent = 'جاري المعالجة...';
             chatMessages.appendChild(botDiv);
 
-            chatHistory.push({ role: "user", parts: [{ text: text }] });
+            // إضافة الرسالة بنظام OpenAI
+            chatHistory.push({ role: "user", content: text });
 
             let success = false;
             
-            // نظام التبديل بين المفاتيح (Fallback System)
             for (let i = 0; i < API_KEYS.length; i++) {
                 try {
-                    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=${API_KEYS[currentKeyIndex]}`, {
+                    // استخدام رابط التوافق مع OpenAI 
+                    const response = await fetch('https://generativelanguage.googleapis.com/v1beta/openai/chat/completions', {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ contents: chatHistory })
+                        headers: { 
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${API_KEYS[currentKeyIndex]}` // إرسال المفتاح كـ Bearer Token
+                        },
+                        body: JSON.stringify({ 
+                            model: "gemini-3.8-flash",
+                            messages: chatHistory 
+                        })
                     });
                     
                     if (!response.ok) throw new Error('API Error');
                     
                     const data = await response.json();
-                    const botReply = data.candidates[0].content.parts[0].text;
+                    
+                    // استخراج الرد بطريقة OpenAI
+                    const botReply = data.choices[0].message.content; 
                     
                     botDiv.innerHTML = botReply;
-                    chatHistory.push({ role: "model", parts: [{ text: botReply }] });
+                    chatHistory.push({ role: "assistant", content: botReply });
                     success = true;
                     break;
                 } catch (error) {
