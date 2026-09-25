@@ -2,17 +2,18 @@ import json, os, logging, base64, pathlib, glob
 from datetime import datetime
 from html2image import Html2Image
 from PIL import Image
-from services.weather_api import OpenMeteoClient
-from engine.data_processor import DataProcessor
+
+# استيراد حاسبة الخطر وطبقة التحقق الجديدة من الطقس
 from engine.risk_calculator import RiskCalculator
+from weather_validator import WeatherAccuracyJudge
 
 logging.basicConfig(level=logging.INFO, format='%(message)s')
 logger = logging.getLogger(__name__)
 
 class BulletinGenerator:
     def __init__(self):
-        self.weather_client = OpenMeteoClient()
-        self.processor = DataProcessor()
+        # استخدام قاضي الطقس الجديد بدلاً من weather_client القديم
+        self.weather_judge = WeatherAccuracyJudge()
         self.risk_calculator = RiskCalculator()
         
         self.base_project_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -29,6 +30,7 @@ class BulletinGenerator:
         try:
             with open(self.cities_file, 'r', encoding='utf-8') as f: return json.load(f)
         except Exception as e:
+            logger.error(f"Error loading cities: {e}")
             return {}
 
     def get_optimized_background_b64(self, directory):
@@ -98,9 +100,13 @@ class BulletinGenerator:
         logger.info("🧹 تم إنشاء الصور والموقع بنجاح!")
 
     def _generate_city_infographic(self, city_data):
-        raw_data = self.weather_client.fetch_data(city_data['latitude'], city_data['longitude'], city_data['timezone'])
-        if not raw_data: return
-        daily_data = self.processor.process_open_meteo_data(raw_data)[:5]
+        # 1. الحصول على الأيام الخمسة الموثقة والمقارنة مباشرة من القاضي
+        daily_data = self.weather_judge.get_validated_forecast(city_data['latitude'], city_data['longitude'], city_data['timezone'])
+        
+        if not daily_data:
+            logger.error(f"❌ لم يتم جلب البيانات لمدينة {city_data['name_ar']}")
+            return
+            
         base_dir = os.path.join(self.base_project_dir, "assets")
         bg_b64 = self.get_optimized_background_b64(base_dir)
         font_uri = self.get_font_uri(base_dir)
@@ -109,6 +115,7 @@ class BulletinGenerator:
         cards_html = ""
         
         for day in daily_data:
+            # يتم الاعتماد الآن على القيم اليومية النقية لحساب المخاطر
             risk = self.risk_calculator.calculate_daily_risk(day)
             nose = risk['nose']
             breath = risk['breath']
@@ -229,6 +236,10 @@ class BulletinGenerator:
 </html>"""
         
         index_path = os.path.join(self.base_project_dir, "index.html")
+        
+        # ⚠️ ملاحظة: السطر التالي يقوم بتحديث وإعادة كتابة ملف index.html 
+        # تأكد من أن كود المساعد الذكي Chatbot قد تم وضعه خارج هذه الدالة أو يتم دمجه هنا،
+        # لأن هذه الدالة تقوم بإنشاء HTML جديد للموقع.
         with open(index_path, "w", encoding="utf-8") as f:
             f.write(html)
         logger.info("🌐 تم إنشاء صفحة الموقع بنجاح: index.html")

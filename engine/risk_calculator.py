@@ -32,19 +32,26 @@ class RiskCalculator:
         dust = float(str(day_data.dust).split()[0]) if str(day_data.dust).split()[0].replace('.', '', 1).isdigit() else 0
         humidity = float(day_data.humidity)
         wind = float(day_data.wind_speed)
+        
+        # تمت إضافة الحرارة العظمى من التحديث الجديد لتعزيز دقة التقييم الطبي
+        max_temp = float(getattr(day_data, 'max_temp', 25))
 
-        # 1. منطق الحساسية (الأنف)
-        if dust > 60 or wind > 35:
+        # 1. منطق الحساسية (الأنف) - تم دمج تأثير الحرارة العالية التي تسبب الجفاف والتهيج
+        if dust > 60 or wind > 35 or (wind > 25 and max_temp > 38):
+            nose_key = "severe"
+        elif dust > 40 or wind > 25 or (max_temp > 35 and humidity < 30):
             nose_key = "high"
-        elif dust > 20 or wind > 20 or humidity > 80:
+        elif dust > 20 or wind > 15 or humidity > 75:
             nose_key = "moderate"
         else:
             nose_key = "low"
 
-        # 2. منطق خطر الربو (التنفس)
-        if dust > 50 or (humidity > 85 and wind > 25):
+        # 2. منطق خطر الربو (التنفس) - مدمج معه الخطر الحراري
+        if dust > 50 or (humidity > 80 and wind > 30) or max_temp > 40:
+            breath_key = "severe"
+        elif dust > 30 or (humidity > 75 and wind > 20) or max_temp > 35:
             breath_key = "high"
-        elif dust > 15 or humidity > 70 or wind > 20:
+        elif dust > 15 or humidity > 65 or wind > 15:
             breath_key = "moderate"
         else:
             breath_key = "low"
