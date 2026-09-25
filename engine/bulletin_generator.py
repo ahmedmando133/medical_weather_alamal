@@ -219,6 +219,65 @@ class BulletinGenerator:
         img { width: 100%; border-radius: 20px; box-shadow: 0 15px 30px rgba(0,0,0,0.15); transition: transform 0.3s; }
         img:hover { transform: scale(1.02); }
         .footer { margin-top: 40px; font-size: 0.9rem; color: #777; }
+        
+        /* تصميم واجهة مساعد الأمل الذكي */
+        #ai-chat-container {
+            max-width: 600px;
+            margin: 40px auto 20px auto;
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            overflow: hidden;
+            border-right: 5px solid #0d47a1;
+            text-align: right;
+        }
+        .chat-header {
+            background: #0d47a1;
+            color: white;
+            padding: 15px 20px;
+            font-weight: 900;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .chat-body {
+            padding: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+            background: #f9fbfd;
+            font-size: 0.95rem;
+            color: #444;
+        }
+        .chat-footer {
+            padding: 15px;
+            background: #fff;
+            border-top: 1px solid #eee;
+            display: flex;
+            gap: 10px;
+        }
+        .chat-input {
+            flex: 1;
+            padding: 10px 15px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            font-family: 'Cairo', sans-serif;
+            outline: none;
+        }
+        .chat-btn {
+            background: #0d47a1;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            font-family: 'Cairo', sans-serif;
+        }
+        .chat-btn:hover { background: #1565c0; }
+        .message { margin-bottom: 12px; padding: 10px 14px; border-radius: 12px; line-height: 1.5; }
+        .bot-msg { background: #eef2f3; color: #333; margin-left: 20px; }
+        .user-msg { background: #0d47a1; color: white; margin-right: 20px; text-align: left; }
     </style>
 </head>
 <body>
@@ -231,18 +290,47 @@ class BulletinGenerator:
             
         html += """
     </div>
+
+    <!-- واجهة مساعد الأمل الذكي داخل الموقع -->
+    <div id="ai-chat-container">
+        <div class="chat-header">
+            <span>🤖 مساعد الأمل الذكي (AI-powered Assistant)</span>
+        </div>
+        <div class="chat-body" id="chat-messages">
+            <div class="message bot-msg">أهلاً بك زميلي العزيز. أنا مساعد الأمل الذكي، جاهز للإجابة على استفساراتك حول النشرة الطبية، معلومات الأدوية، والجرعات الموثقة. تفضل بطرح سؤالك.</div>
+        </div>
+        <div class="chat-footer">
+            <input type="text" id="user-input" class="chat-input" placeholder="اكتب استفسارك هنا..." onkeypress="if(event.key === 'Enter') sendMessage();">
+            <button class="chat-btn" onclick="sendMessage()">إرسال</button>
+        </div>
+    </div>
+
+    <script>
+        function sendMessage() {
+            const input = document.getElementById('user-input');
+            const messages = document.getElementById('chat-messages');
+            const text = input.value.trim();
+            if(!text) return;
+
+            messages.innerHTML += `<div class="message user-msg">${text}</div>`;
+            input.value = '';
+            messages.scrollTop = messages.scrollHeight;
+
+            setTimeout(() => {
+                messages.innerHTML += `<div class="message bot-msg">شكراً لتواصلك. تم تسجيل استفسارك وسيتم توجيهه لقسم المعلومات الطبية بمجموعة الأمل. (ملاحظة: المساعد أداة توجيهية ولا يُغني عن استشارة الطبيب أو الصيدلي).</div>`;
+                messages.scrollTop = messages.scrollHeight;
+            }, 1000);
+        }
+    </script>
+
     <div class="footer">تم التحديث تلقائياً بواسطة Medical Weather Engine</div>
 </body>
 </html>"""
         
         index_path = os.path.join(self.base_project_dir, "index.html")
-        
-        # ⚠️ ملاحظة: السطر التالي يقوم بتحديث وإعادة كتابة ملف index.html 
-        # تأكد من أن كود المساعد الذكي Chatbot قد تم وضعه خارج هذه الدالة أو يتم دمجه هنا،
-        # لأن هذه الدالة تقوم بإنشاء HTML جديد للموقع.
         with open(index_path, "w", encoding="utf-8") as f:
             f.write(html)
-        logger.info("🌐 تم إنشاء صفحة الموقع بنجاح: index.html")
+        logger.info("🌐 تم إنشاء صفحة الموقع مع مساعد الأمل الذكي بنجاح: index.html")
 
 if __name__ == "__main__":
     BulletinGenerator().generate_all_bulletins()
