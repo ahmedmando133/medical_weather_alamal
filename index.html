@@ -170,10 +170,9 @@
 1. أضف دائماً تنبيهاً قصيراً بعد الجرعات: "لكن خليك متأكد إن المعلومات هذي ما تغنيش عن استشارة طبيبك أو الصيدلي، خصوصًا لو الحالة لطفل."
 2. لا تشخص، لا تغير وصفة، لا تخمن. أجب مباشرة وبشكل مختصر جداً أولاً، ثم التنبيه.`;
 
-        // تم التعديل بالكامل لتتوافق مع نظام OpenAI 
-        let chatHistory = [
-            { role: "system", content: systemPrompt },
-            { role: "assistant", content: "علم. سأرد باللهجة الليبية كمساعد طبي تابع لمجموعة الأمل، سأستخدم الـ Fixed Knowledge فقط، وسأوجه المريض لفريق مجموعة الأمل الطبية عند الحاجة مع توفير رابط الواتساب المباشر." }
+        // مصفوفة الرسائل بالصيغة القياسية لـ OpenAI
+        let messages = [
+            { role: "system", content: systemPrompt }
         ];
 
         chatButton.addEventListener('click', () => {
@@ -205,46 +204,48 @@
             botDiv.textContent = 'جاري المعالجة...';
             chatMessages.appendChild(botDiv);
 
-            // إضافة الرسالة بنظام OpenAI
-            chatHistory.push({ role: "user", content: text });
+            // إضافة رسالة المستخدم للمصفوفة
+            messages.push({ role: "user", content: text });
 
             let success = false;
             
             for (let i = 0; i < API_KEYS.length; i++) {
                 try {
-                    // استخدام رابط التوافق مع OpenAI 
-                    const response = await fetch('https://generativelanguage.googleapis.com/v1beta/openai/chat/completions', {
+                    console.log("Trying API key index:", currentKeyIndex); // للتبع في الكونسول
+                    const response = await fetch('https://api.openai.com/v1/chat/completions', {
                         method: 'POST',
                         headers: { 
                             'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${API_KEYS[currentKeyIndex]}` // إرسال المفتاح كـ Bearer Token
+                            'Authorization': `Bearer ${API_KEYS[currentKeyIndex]}`
                         },
                         body: JSON.stringify({ 
-                            model: "gemini-3.8-flash",
-                            messages: chatHistory 
+                            model: "gemini-3.8-flash", // استخدام الموديل اللي طلبته
+                            messages: messages 
                         })
                     });
                     
-                    if (!response.ok) throw new Error('API Error');
+                    if (!response.ok) {
+                        console.error(`API Error for key ${currentKeyIndex}:`, response.status, response.statusText);
+                        throw new Error(`API Error: ${response.status}`);
+                    }
                     
                     const data = await response.json();
                     
-                    // استخراج الرد بطريقة OpenAI
                     const botReply = data.choices[0].message.content; 
                     
                     botDiv.innerHTML = botReply;
-                    chatHistory.push({ role: "assistant", content: botReply });
+                    messages.push({ role: "assistant", content: botReply });
                     success = true;
-                    break;
+                    break; // الخروج من الـ Loop لو نجح
                 } catch (error) {
-                    console.warn(`Key at index ${currentKeyIndex} failed. Trying next...`);
+                    console.warn(`Key at index ${currentKeyIndex} failed. Trying next... Error details:`, error);
                     currentKeyIndex = (currentKeyIndex + 1) % API_KEYS.length;
                 }
             }
 
             if (!success) {
                 botDiv.innerHTML = 'عذراً، النظام مشغول حالياً. يرجى التواصل مباشرة مع فريق مجموعة الأمل الطبية عبر الواتساب: <a href="https://wa.me/218931571358" target="_blank" style="color:#0d47a1; font-weight:bold; text-decoration:underline;">اضغط هنا (0931571358)</a>';
-                chatHistory.pop();
+                messages.pop(); // إزالة رسالة المستخدم من المصفوفة عشان ما تتراكمش الأخطاء
             }
             
             chatMessages.scrollTop = chatMessages.scrollHeight;
