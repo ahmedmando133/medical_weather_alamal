@@ -13,7 +13,58 @@
         .city-card { width: 100%; max-width: 500px; }
         img { width: 100%; border-radius: 20px; box-shadow: 0 15px 30px rgba(0,0,0,0.15); transition: transform 0.3s; }
         img:hover { transform: scale(1.02); }
-        .footer { margin-top: 40px; font-size: 0.9rem; color: #777; }
+        
+        /* تصميم قسم دليل المؤشرات الطبية في الموقع */
+        .medical-guide-box {
+            max-width: 1050px;
+            margin: 40px auto 20px auto;
+            background: #ffffff;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            padding: 25px;
+            text-align: right;
+            border-right: 5px solid #0d47a1;
+            border-top: 1px solid #e0e0e0;
+            border-left: 1px solid #e0e0e0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .medical-guide-box h3 {
+            color: #0d47a1;
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+            font-weight: 900;
+        }
+        .medical-guide-box p {
+            font-size: 1rem;
+            color: #444;
+            margin-bottom: 10px;
+            line-height: 1.8;
+            font-weight: 600;
+            text-align: right;
+        }
+        .medical-disclaimer {
+            background-color: #fff8e1;
+            border-right: 4px solid #ffa000;
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            color: #b71c1c;
+            font-weight: bold;
+            font-size: 0.95rem;
+        }
+        .github-link-section {
+            margin-top: 15px;
+            font-size: 0.95rem;
+            color: #555;
+        }
+        .github-link-section a {
+            color: #0d47a1;
+            font-weight: bold;
+            text-decoration: underline;
+        }
+
+        .footer { margin-top: 30px; font-size: 0.9rem; color: #777; }
 
         #chat-button {
             position: fixed; bottom: 20px; right: 20px;
@@ -70,7 +121,7 @@
     </style>
 </head>
 <body>
-    <h1>🌤 النشرة الطبية لمرضى الحساسية والربو</h1>
+    <h1>🌤️ النشرة الطبية لمرضى الحساسية والربو</h1>
     <p>برعاية مجموعة الأمل الطبية - Organon</p>
     <div class="grid">
         <div class="city-card"><img src="output/infographic_tripoli.png" alt="نشرة طرابلس"></div>
@@ -78,17 +129,36 @@
         <div class="city-card"><img src="output/infographic_misrata.png" alt="نشرة مصراتة"></div>
         <div class="city-card"><img src="output/infographic_zawiya.png" alt="نشرة الزاوية"></div>
     </div>
+
+    <!-- قسم دليل المؤشرات الطبية والتنويه وربطه بجيت هاب -->
+    <div class="medical-guide-box">
+        <h3>📌 دليل المؤشرات الطبية والمرجعية العلمية</h3>
+        <p>▪️ <b>مؤشر الحساسية:</b> يعكس احتمالية تهيج الجيوب الأنفية بناءً على كثافة الغبار والجسيمات الدقيقة في الهواء.</p>
+        <p>▪️ <b>خطر الربو:</b> يوضح مستوى التحفيز المتوقع لضيق التنفس نتيجة للتغيرات الحادة في الرطوبة والغازات المهيجة.</p>
+        <p>▪️ <b>المرجعية:</b> تم احتساب هذه المؤشرات بدقة استناداً إلى المعايير الطبية لمنظمة الصحة العالمية (WHO Guidelines).</p>
+        
+        <div class="medical-disclaimer">
+            ⚠️ تنويه طبي: نوصي بالالتزام التام بجرعات بخاخات الأنف ومضادات الحساسية الموصوفة من قِبل طبيبك المختص لضمان وقاية فعالة.
+        </div>
+
+        <div class="github-link-section">
+            🌐 يمكنكم الاطلاع على الكود المصدرى ومتابعة التحديثات البرمجية عبر مستودعنا على جيت هاب: 
+            <a href="https://github.com/ahmedmando133/medical_weather_alamal" target="_blank">GitHub Repository Link</a>
+        </div>
+    </div>
+
     <div class="footer">تم التحديث تلقائياً بواسطة Medical Weather Engine</div>
 
     <button id="chat-button">💬</button>
 
     <div id="chat-window">
         <div id="chat-header">
-            <span> مساعد الأمل الطبي الذكي </span>
-            <span id="close-chat"> ✖️ </span>
+            <span>🤖 مساعد الأمل الطبي الذكي</span>
+            <span id="close-chat">✖️</span>
         </div>
 
         <div id="suggested-questions-container">
+            <button class="sq-btn" onclick="sendSuggested('اشرح لي دليل المؤشرات الطبية ومعايير الصحة العالمية')"> 📖 شرح دليل المؤشرات </button>
             <button class="sq-btn" onclick="sendSuggested('أماكن توفر الأدوية الأصلية')"> 📍 أماكن توفر الأدوية </button>
             <button class="sq-btn" onclick="sendSuggested('جرعة شراب Aerius للأطفال والكبار')"> 💊 جرعة Aerius </button>
             <button class="sq-btn" onclick="sendSuggested('جرعة وطريقة استخدام Nasonex')"> 💊 جرعة Nasonex </button>
@@ -101,13 +171,13 @@
             <div class="message bot-message">
                 • أهلاً بك طبيبنا الفاضل.<br>
                 • أنا المساعد الطبي الرقمي لمجموعة الأمل.<br>
-                • كيف نقدر نساعدك اليوم بخصوص أدوية الحساسية، الربو، الأطباء المعتمدين، أو النشرة الطبية؟
+                • كيف نقدر نساعدك اليوم بخصوص أدوية الحساسية، الربو، تفاصيل النشرة، أو دليل المؤشرات الطبية؟
             </div>
         </div>
 
         <div id="chat-input-area">
             <input type="text" id="chat-input" placeholder="اكتب استفسارك هنا..." dir="rtl">
-            <button id="send-btn"> إرسال </button>
+            <button id="send-btn">إرسال</button>
         </div>
     </div>
 
@@ -137,6 +207,13 @@
 3. دكتور إسلام الشافعي: Country Manager لشركة Organon.
 4. إذا طلب المستخدم التواصل، طلب توفير دواء، سأل عن أي طبيب، أو لم تكن المعلومة متوفرة عندك، وجهه فوراً للتواصل المباشر مع (د. أحمد ماندو) عبر الواتساب من خلال هذا الرابط المباشر: <a href='https://wa.me/218931571358' target='_blank' style='color:#0d47a1; font-weight:bold; text-decoration:underline;'>(0931571358)</a>.
 
+[دليل المؤشرات الطبية ومعايير الصحة العالمية - تغذية الذكاء الاصطناعي]:
+- مؤشر الحساسية: يعكس احتمالية تهيج الجيوب الأنفية بناءً على كثافة الغبار والجسيمات الدقيقة في الهواء.
+- خطر الربو: يوضح مستوى التحفيز المتوقع لضيق التنفس نتيجة للتغيرات الحادة في الرطوبة والغازات المهيجة.
+- المرجعية العلمية: تم احتساب هذه المؤشرات بدقة استناداً إلى المعايير الطبية لمنظمة الصحة العالمية (WHO Guidelines).
+- التنويه الطبي الإلزامي: نوصي بالالتزام التام بجرعات بخاخات الأنف ومضادات الحساسية الموصوفة من قِبل الطبيب المختص لضمان وقاية فعالة.
+- مستودع المشروع البرمجي ومتابعة التحديثات متاحة عبر جيت هاب: https://github.com/ahmedmando133/medical_weather_alamal
+
 [دليل الجرعات والمعلومات الطبية المعتمدة بدقة - أولوية قصوى ولا تمس]:
 - شراب إيريوس (Aerius Syrup) والأقراص:
   * الأطفال من 6 أشهر إلى سنة: 2 مل (1 ملغ) مرة يومياً.
@@ -150,7 +227,6 @@
   * أطفال من 2 إلى 5 سنوات: قرص مضغ 4 ملغ مرة مساءً.
   * أطفال من 6 إلى 14 سنة: قرص مضغ 5 ملغ مرة مساءً.
   * البالغين (15 سنة فما فوق): قرص 10 ملغ يبتلع بالماء مساءً.
-- النشرة الجوية ترصد الغبار والرياح والرطوبة لطرابلس، بنغازي، مصراتة، والزاوية وفق معايير منظمة الصحة العالمية.
 - الأدوية الأصلية متوفرة حصرياً عبر الصيدليات المعتمدة لمجموعة الأمل في ليبيا.`;
 
         let messages = [{ role: "system", content: systemPrompt }];

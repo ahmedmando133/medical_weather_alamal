@@ -3,7 +3,7 @@ from datetime import datetime
 from html2image import Html2Image
 from PIL import Image
 
-# استيراد حاسبة الخطر وطبقة التحقق الجديدة من الطقس (لتكون داتا اليوم بالكامل ومضمونة)
+# استيراد حاسبة الخطر وطبقة التحقق الجديدة من الطقس
 from engine.risk_calculator import RiskCalculator
 from weather_validator import WeatherAccuracyJudge
 
@@ -171,22 +171,25 @@ class BulletinGenerator:
             .city-title {{ display: inline-block; background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(10px); border: 2px solid rgba(255,255,255,0.4); border-radius: 25px; padding: 5px 50px; font-size: 38pt; color: #0d47a1; font-weight: 900; box-shadow: 0 10px 20px rgba(0,0,0,0.1); text-shadow: 1px 2px 5px rgba(0,0,0,0.3); }}
             .grid-container {{ display: flex; justify-content: space-between; gap: 10px; padding: 0 10px; }}
             
-            .card {{ background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(8px); border-top: 2px solid rgba(255,255,255,0.6); border-left: 2px solid rgba(255,255,255,0.6); border-right: 1px solid rgba(255,255,255,0.2); border-bottom: 1px solid rgba(255,255,255,0.2); border-radius: 18px; padding: 10px 8px; width: 19%; height: fit-content; box-sizing: border-box; text-align: center; box-shadow: 5px 10px 20px rgba(0,0,0,0.15); display: flex; flex-direction: column; transition: 0.3s; }}
+            .card {{ background: rgba(255, 255, 255, 0.18); backdrop-filter: blur(8px); border-top: 2px solid rgba(255,255,255,0.7); border-left: 2px solid rgba(255,255,255,0.7); border-right: 1px solid rgba(255,255,255,0.3); border-bottom: 1px solid rgba(255,255,255,0.3); border-radius: 18px; padding: 10px 8px; width: 19%; height: fit-content; box-sizing: border-box; text-align: center; box-shadow: 5px 10px 20px rgba(0,0,0,0.15); display: flex; flex-direction: column; transition: 0.3s; }}
             
             .alert-card {{ background: rgba(231, 76, 60, 0.25) !important; border: 2px solid rgba(231, 76, 60, 0.9) !important; box-shadow: 0 0 20px rgba(231, 76, 60, 0.6) !important; }}
             .alert-day {{ background: linear-gradient(90deg, #900C3F, #C70039) !important; }}
-            .alert-badge {{ background: #c0392b; color: white; font-size: 11pt; font-weight: bold; padding: 2px 5px; border-radius: 8px; margin-bottom: 6px; box-shadow: 0 2px 5px rgba(0,0,0,0.3); text-shadow: 1px 1px 2px rgba(0,0,0,0.5); }}
+            .alert-badge {{ background: #c0392b; color: white; font-size: 11.5pt; font-weight: 900; padding: 3px 6px; border-radius: 8px; margin-bottom: 6px; box-shadow: 0 2px 5px rgba(0,0,0,0.3); text-shadow: 1px 1px 2px rgba(0,0,0,0.5); }}
 
-            .day-name {{ background: linear-gradient(90deg, #0d47a1, #1976d2); color: white; padding: 4px; border-radius: 10px; font-size: 13pt; font-weight: 900; margin-bottom: 6px; text-shadow: 1px 2px 4px rgba(0,0,0,0.5); }}
+            .day-name {{ background: linear-gradient(90deg, #0d47a1, #1976d2); color: white; padding: 5px; border-radius: 10px; font-size: 14pt; font-weight: 900; margin-bottom: 6px; text-shadow: 1px 2px 4px rgba(0,0,0,0.5); }}
             .weather-icon {{ font-size: 34pt; margin: 0; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.2)); }}
-            .temp-box {{ font-size: 26pt; color: #c0392b; font-weight: 900; margin-bottom: 3px; text-shadow: 0 2px 4px rgba(255,255,255,0.9); border-bottom: 1px solid rgba(255,255,255,0.3); padding-bottom: 3px; }}
-            .details-list {{ text-align: right; margin-bottom: 5px; border-bottom: 1px solid rgba(255,255,255,0.3); padding-bottom: 5px; }}
-            .d-item {{ font-size: 13pt; color: #000; font-weight: 900; margin-bottom: 3px; text-shadow: 0 1px 4px rgba(255,255,255,0.9); }}
-            .val {{ color: #111; font-weight: 900; }}
+            .temp-box {{ font-size: 26pt; color: #b71c1c; font-weight: 900; margin-bottom: 4px; text-shadow: 0 2px 4px rgba(255,255,255,0.9); border-bottom: 1.5px solid rgba(255,255,255,0.4); padding-bottom: 3px; }}
+            .details-list {{ text-align: right; margin-bottom: 6px; border-bottom: 1.5px solid rgba(255,255,255,0.4); padding-bottom: 6px; }}
+            
+            /* تكبير وتوضيح خط عناصر الجدول والبيانات لتكون أضح وأكبر للقراءة */
+            .d-item {{ font-size: 13.5pt; color: #000; font-weight: 900; margin-bottom: 4px; text-shadow: 0 1px 4px rgba(255,255,255,0.9); letter-spacing: -0.2px; }}
+            .val {{ color: #0a2540; font-weight: 900; font-size: 14pt; }}
+            
             .med-indicators {{ display: flex; flex-direction: column; gap: 6px; margin-top: auto; }}
-            .m-box {{ padding: 6px; border-radius: 10px; border: 2px solid; box-shadow: inset 0 2px 5px rgba(255,255,255,0.3); background-blend-mode: overlay; }}
-            .m-title {{ font-size: 12pt; color: #111; font-weight: 900; text-shadow: 0 1px 2px rgba(255,255,255,0.9); }}
-            .m-val {{ font-size: 15pt; font-weight: 900; margin-top: 2px; color: #ffffff; text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 0px 4px 6px rgba(0,0,0,0.8); }}
+            .m-box {{ padding: 7px; border-radius: 10px; border: 2.5px solid; box-shadow: inset 0 2px 5px rgba(255,255,255,0.4); background-blend-mode: overlay; }}
+            .m-title {{ font-size: 12.5pt; color: #000; font-weight: 900; text-shadow: 0 1px 2px rgba(255,255,255,0.9); }}
+            .m-val {{ font-size: 15.5pt; font-weight: 900; margin-top: 2px; color: #ffffff; text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 0px 4px 6px rgba(0,0,0,0.8); }}
         </style>
         </head>
         <body>
