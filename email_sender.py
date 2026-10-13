@@ -9,8 +9,7 @@ def send_infographics_email():
     
     # 2. قائمة المستلمين
     RECEIVER_EMAILS = [
-        "ahmed.abdelmawgood@amalgrp.com", 
-    "Faisal.marghni@amalgrp.com","islam.elshafey@amalgrp.com","malghnime@hotmail.com"]
+        "ahmed.abdelmawgood@amalgrp.com"]
     
     msg = EmailMessage()
     msg['Subject'] = '📊 النشرة الطبية ومؤشرات الحساسية الأسبوعية | مجموعة الأمل الطبية'
